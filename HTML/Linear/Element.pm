@@ -25,6 +25,11 @@ sub as_string {
     return $self->key($self->sha->b64digest);
 }
 
+sub as_xpath {
+    my ($self) = @_;
+    return join('/', '', map { $_->as_xpath } $self->path);
+}
+
 sub contains {
     my ($self, $other) = @_;
 

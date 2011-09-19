@@ -31,6 +31,30 @@ sub as_string {
     return $self->key($self->json->encode($ref));
 }
 
+sub as_xpath {
+    my ($self) = @_;
+
+    my $xpath = $self->tag;
+
+    if (keys %{$self->attributes}) {
+        $xpath .= '[';
+        $xpath .=
+            join ' and ',
+            map { "\@${_}=" . _quote($self->attributes->{$_}) }
+            sort keys %{$self->attributes};
+        $xpath .= ']';
+    }
+
+    return $xpath;
+}
+
+sub _quote {
+    local $_ = $_[0];
+    s/\\/\\\\/g;
+    s/'/\\'/g;
+    "'$_'";
+}
+
 no Moose;
 __PACKAGE__->meta->make_immutable;
 
