@@ -10,4 +10,5 @@ for my $el ($hl->as_list) {
     #say "<!-- $el -->";
     say $el->as_xpath;
     say $el->content if $el->content;
+    say '';
 }

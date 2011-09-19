@@ -26,7 +26,7 @@ sub as_string {
         _tag    => $self->tag,
         addr    => $self->address,
     };
-    $ref->{attr} = $self->attributes if keys %{$self->attributes};
+    $ref->{attr} = $self->attributes if keys $self->attributes;
 
     return $self->key($self->json->encode($ref));
 }
@@ -36,12 +36,12 @@ sub as_xpath {
 
     my $xpath = $self->tag;
 
-    if (keys %{$self->attributes}) {
+    if (keys $self->attributes) {
         $xpath .= '[';
         $xpath .=
             join ' and ',
             map { "\@${_}=" . _quote($self->attributes->{$_}) }
-            sort keys %{$self->attributes};
+            sort keys $self->attributes;
         $xpath .= ']';
     }
 
