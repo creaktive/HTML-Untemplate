@@ -14,11 +14,12 @@ has _list       => (
     is          => 'ro',
     isa         => 'ArrayRef[Any]',
     default     => sub { [] },
-    handles     => {qw{
-        add_element     push
-        count_elements  count
-    }},
-    auto_deref  => 1,
+    handles     => {
+        add_element     => 'push',
+        as_list         => 'elements',
+        count_elements  => 'count',
+        get_element     => 'accessor',
+    },
 );
 
 after eof => sub {
@@ -28,12 +29,12 @@ after eof => sub {
 
     my $i = 0;
     my (@list, %uniq);
-    push @list, [ $i++, $_->depth ] for $self->_list;
+    push @list, [ $i++, $_->depth ] for $self->as_list;
 
     my $nodes = Data::NestedSet->new(\@list, 1)->create_nodes;
     for (@{$nodes}) {
         my ($i, $depth, $left, $right) = @{$_};
-        my $elem = $self->_list->[$i];
+        my $elem = $self->get_element($i);
 
         $elem->index($uniq{join ',', $elem->path}++);
 
