@@ -5,6 +5,7 @@ use Digest::SHA;
 use Moose;
 
 has [qw(left right)] => (is => 'rw', isa => 'Int', default => -1);
+has attributes  => (is => 'rw', isa => 'HashRef[Str]', default => sub { {} }, auto_deref => 1);
 has content     => (is => 'rw', isa => 'Str', default => '');
 has depth       => (is => 'ro', isa => 'Int', required => 1);
 has index       => (is => 'rw', isa => 'Int', default => 0);
@@ -13,6 +14,11 @@ has path        => (is => 'ro', isa => 'ArrayRef[HTML::Linear::Path]', required 
 has sha         => (is => 'ro', isa => 'Digest::SHA', default => sub { new Digest::SHA(256) }, lazy => 1 );
 
 use overload '""' => \&as_string, fallback => 1;
+
+sub BUILD {
+    my ($self) = @_;
+    $self->attributes({%{$self->path->[-1]->attributes}});
+}
 
 sub as_string {
     my ($self) = @_;

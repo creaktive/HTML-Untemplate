@@ -36,12 +36,17 @@ sub as_xpath {
 
     my $xpath = $self->tag;
 
-    if (keys $self->attributes) {
+    my @class_id =
+        sort
+        grep { m{^(?:id|class)$}i }
+        keys $self->attributes;
+
+    if (@class_id) {
         $xpath .= '[';
         $xpath .=
             join ' and ',
             map { "\@${_}=" . _quote($self->attributes->{$_}) }
-            sort keys $self->attributes;
+            @class_id;
         $xpath .= ']';
     }
 

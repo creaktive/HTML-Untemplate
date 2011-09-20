@@ -8,7 +8,11 @@ my $hl = HTML::Linear->new_from_file($ARGV[0]);
 for my $el ($hl->as_list) {
     #say '<![CDATA[' . join(',', $el->path) . ']]>';
     #say "<!-- $el -->";
-    say $el->as_xpath;
-    say $el->content if $el->content;
-    say '';
+    my $xpath = $el->as_xpath;
+    for my $key (sort keys $el->attributes) {
+        next if $key =~ m{^(?:class|id|/)$}i;
+        say "${xpath}/\@${key}=" . $el->attributes->{$key} unless $el->attributes->{$key} =~ m{^\s*$}s;
+    }
+    say "${xpath}/text()=" . ($el->content =~ s/\s+/ /grs) unless $el->content =~ m{^\s*$}s;
+    #say '';
 }
