@@ -55,8 +55,11 @@ sub as_xpath {
 
 sub _quote {
     local $_ = $_[0];
-    s/\\/\\\\/g;
-    s/'/\\'/g;
+    s/\\/\\\\/gs;
+    s/'/\\'/gs;
+    s/\s+/ /gs;
+    s/^\s//s;
+    s/\s$//s;
     "'$_'";
 }
 

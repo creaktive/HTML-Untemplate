@@ -50,7 +50,7 @@ sub deparse {
         address     => $node->address,
         attributes  => {
             map     { lc $_ => $node->attr($_) }
-            grep    { not m{^_} }
+            grep    { not m{^[_/]} }
             $node->all_attr_names
         },
         tag         => $node->tag,
