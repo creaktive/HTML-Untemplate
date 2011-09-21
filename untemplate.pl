@@ -14,6 +14,7 @@ for my $el ($hl->as_list) {
             unless $el->attributes->{$key} =~ m{^\s*$}s;
     }
 
-    say "${xpath}/text()\t" . ($el->content =~ s/\s+/ /grs)
-        unless $el->content =~ m{^\s*$}s;
+    unless ($el->content =~ m{^\s*$}s) {
+        say "${xpath}/text()\t${_}" for split m{\r?\n}, $el->content;
+    }
 }
