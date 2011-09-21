@@ -22,6 +22,8 @@ has _list       => (
     },
 );
 
+has _uniq       => (is => 'ro', isa => 'HashRef[Str]', default => sub { {} });
+
 after eof => sub {
     my ($self) = @_;
 
@@ -37,6 +39,7 @@ after eof => sub {
         my $elem = $self->get_element($i);
 
         $elem->index($uniq{join ',', $elem->path}++);
+        $elem->index_map($self->_uniq);
 
         $elem->left($left);
         $elem->right($right);
@@ -68,9 +71,11 @@ sub deparse {
         );
     }
 
+    my %uniq;
     for my $child ($node->content_list) {
         if (ref $child) {
-            $self->deparse($child, [ @{$path}, $level ]);
+            my $l = $self->deparse($child, [ @{$path}, $level ]);
+            push @{$uniq{$l->as_xpath}}, $l->address;
         } else {
             $self->add_element(
                 HTML::Linear::Element->new({
@@ -81,6 +86,16 @@ sub deparse {
             );
         }
     }
+
+    while (my ($xpath, $address) = each %uniq) {
+        next if 2 > scalar @{$address};
+
+        my $i = 0;
+        $self->_uniq->{$_} = '[' . ++$i . ']'
+            for @{$address};
+    }
+
+    return $level;
 }
 
 no Moose;
