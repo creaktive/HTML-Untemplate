@@ -2,6 +2,7 @@
 use common::sense;
 
 use HTML::Linear;
+use Term::ANSIColor qw(:constants);
 
 my %elem;
 for my $file (@ARGV) {
@@ -33,7 +34,7 @@ for my $xpath (sort keys %xpath) {
         for keys %{$xpath{$xpath}};
 
     if (1 < scalar keys %file) {
-        say "<$xpath>";
+        say BOLD, BRIGHT_RED, '<', CYAN, $xpath, BRIGHT_RED, '>';
         for my $file (sort keys %file) {
             say "<$file>\t$_" for @{$file{$file}};
         }
