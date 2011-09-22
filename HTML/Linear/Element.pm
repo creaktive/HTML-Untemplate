@@ -41,6 +41,21 @@ sub as_xpath {
             } $self->path;
 }
 
+sub as_hash {
+    my ($self) = @_;
+    my $hash = {};
+    my $xpath = $self->as_xpath;
+
+    for my $key (sort keys $self->attributes) {
+        $hash->{"${xpath}/\@${key}"} = $self->attributes->{$key}
+            unless $self->attributes->{$key} =~ m{^\s*$}s;
+    }
+
+    $hash->{"${xpath}/text()"} = $self->content unless $self->content =~ m{^\s*$}s;
+
+    return $hash;
+}
+
 sub contains {
     my ($self, $other) = @_;
 

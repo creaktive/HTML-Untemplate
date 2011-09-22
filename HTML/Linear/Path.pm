@@ -14,6 +14,7 @@ has json        => (
 has address     => (is => 'rw', isa => 'Str', required => 1);
 has attributes  => (is => 'ro', isa => 'HashRef[Str]', required => 1, auto_deref => 1);
 has key         => (is => 'rw', isa => 'Str', default => '');
+has strict      => (is => 'ro', isa => 'Bool', default => 0);
 has tag         => (is => 'ro', isa => 'Str', required => 1);
 
 use overload '""' => \&as_string, fallback => 1;
@@ -36,18 +37,16 @@ sub as_xpath {
 
     my $xpath = $self->tag;
 
-    my @class_id =
-        sort
-        grep { m{^(?:id|class)$}i }
-        keys $self->attributes;
+    unless ($self->strict) {
+        for (qw(id class name)) {
+            if ($self->attributes->{$_}) {
+                $xpath .= '[';
+                $xpath .= "\@${_}=" . _quote($self->attributes->{$_});
+                $xpath .= ']';
 
-    if (@class_id) {
-        $xpath .= '[';
-        $xpath .=
-            join ' and ',
-            map { "\@${_}=" . _quote($self->attributes->{$_}) }
-            @class_id;
-        $xpath .= ']';
+                last;
+            }
+        }
     }
 
     return $xpath;
@@ -55,12 +54,14 @@ sub as_xpath {
 
 sub _quote {
     local $_ = $_[0];
+
     s/\\/\\\\/gs;
     s/'/\\'/gs;
     s/\s+/ /gs;
     s/^\s//s;
     s/\s$//s;
-    "'$_'";
+
+    return "'$_'";
 }
 
 no Moose;

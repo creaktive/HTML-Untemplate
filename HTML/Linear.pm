@@ -22,6 +22,17 @@ has _list       => (
     },
 );
 
+has _strict => (
+    traits      => ['Bool'],
+    is          => 'ro',
+    isa         => 'Bool',
+    default     => 0,
+    handles     => {
+        set_strict      => 'set',
+        unset_strict    => 'unset',
+    },
+);
+
 has _uniq       => (is => 'ro', isa => 'HashRef[Str]', default => sub { {} });
 
 after eof => sub {
@@ -56,6 +67,7 @@ sub deparse {
             grep    { not m{^[_/]} }
             $node->all_attr_names
         },
+        strict      => $self->_strict,
         tag         => $node->tag,
     });
 
