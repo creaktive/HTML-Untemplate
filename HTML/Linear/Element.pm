@@ -4,6 +4,8 @@ use common::sense;
 use Digest::SHA;
 use Moose;
 
+use HTML::Linear::Path;
+
 has [qw(left right)] => (is => 'rw', isa => 'Int', default => -1);
 has attributes  => (is => 'rw', isa => 'HashRef[Str]', default => sub { {} }, auto_deref => 1);
 has content     => (is => 'rw', isa => 'Str', default => '');
@@ -35,7 +37,7 @@ sub as_string {
 sub as_xpath {
     my ($self) = @_;
     return
-        join '/', '',
+        join '',
             map {
                 $_->as_xpath . ($self->index_map->{$_->address} // '')
             } $self->path;
@@ -44,14 +46,22 @@ sub as_xpath {
 sub as_hash {
     my ($self) = @_;
     my $hash = {};
-    my $xpath = $self->as_xpath;
+    my $xpath = $self->as_xpath . HTML::Linear::Path::_wrap(separator => '/');
 
     for my $key (sort keys $self->attributes) {
-        $hash->{"${xpath}/\@${key}"} = $self->attributes->{$key}
+        $hash->{
+            $xpath
+            . HTML::Linear::Path::_wrap(sigil       => '@')
+            . HTML::Linear::Path::_wrap(attribute   => $key)
+        } = $self->attributes->{$key}
             unless $self->attributes->{$key} =~ m{^\s*$}s;
     }
 
-    $hash->{"${xpath}/text()"} = $self->content unless $self->content =~ m{^\s*$}s;
+    $hash->{
+        $xpath
+        . HTML::Linear::Path::_wrap(attribute => 'text()')
+    } = $self->content
+        unless $self->content =~ m{^\s*$}s;
 
     return $hash;
 }

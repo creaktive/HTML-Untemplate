@@ -19,6 +19,17 @@ has tag         => (is => 'ro', isa => 'Str', required => 1);
 
 use overload '""' => \&as_string, fallback => 1;
 
+our %xpath_wrap = (
+    array       => ['' => ''],
+    attribute   => ['' => ''],
+    equal       => ['' => ''],
+    number      => ['' => ''],
+    separator   => ['' => ''],
+    sigil       => ['' => ''],
+    tag         => ['' => ''],
+    value       => ['' => ''],
+);
+
 sub as_string {
     my ($self) = @_;
     return $self->key if $self->key;
@@ -35,14 +46,17 @@ sub as_string {
 sub as_xpath {
     my ($self) = @_;
 
-    my $xpath = $self->tag;
+    my $xpath = _wrap(separator => '/') . _wrap(tag => $self->tag);
 
     unless ($self->strict) {
         for (qw(id class name)) {
             if ($self->attributes->{$_}) {
-                $xpath .= '[';
-                $xpath .= "\@${_}=" . _quote($self->attributes->{$_});
-                $xpath .= ']';
+                $xpath .= _wrap(array       => '[');
+                $xpath .= _wrap(sigil       => '@');
+                $xpath .= _wrap(attribute   => $_);
+                $xpath .= _wrap(equal       => '=');
+                $xpath .= _wrap(value       => _quote($self->attributes->{$_}));
+                $xpath .= _wrap(array       => ']');
 
                 last;
             }
@@ -62,6 +76,13 @@ sub _quote {
     s/\s$//s;
 
     return "'$_'";
+}
+
+sub _wrap {
+    return
+        $xpath_wrap{$_[0]}->[0]
+        . $_[1]
+        . $xpath_wrap{$_[0]}->[1];
 }
 
 no Moose;

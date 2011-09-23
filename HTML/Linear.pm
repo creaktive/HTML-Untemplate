@@ -103,8 +103,11 @@ sub deparse {
         next if 2 > scalar @{$address};
 
         my $i = 0;
-        $self->_uniq->{$_} = '[' . ++$i . ']'
-            for @{$address};
+        $self->_uniq->{$_} =
+            HTML::Linear::Path::_wrap(array     => '[')
+            . HTML::Linear::Path::_wrap(number  => ++$i)
+            . HTML::Linear::Path::_wrap(array   => ']')
+                for @{$address};
     }
 
     return $level;
