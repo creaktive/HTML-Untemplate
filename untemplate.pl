@@ -2,6 +2,18 @@
 use common::sense;
 
 use HTML::Linear;
+use Term::ANSIColor qw(:constants);
+
+%HTML::Linear::Path::xpath_wrap = (
+    array       => ['' => ''],
+    attribute   => ['' => ''],
+    equal       => ['' => ''],
+    number      => ['' => ''],
+    separator   => ['' => ''],
+    sigil       => ['' => ''],
+    tag         => ['' => ''],
+    value       => ['' => ''],
+);
 
 my %elem;
 for my $file (@ARGV) {
