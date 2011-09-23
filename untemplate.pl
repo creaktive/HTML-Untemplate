@@ -4,16 +4,19 @@ use common::sense;
 use HTML::Linear;
 use Term::ANSIColor qw(:constants);
 
-%HTML::Linear::Path::xpath_wrap = (
-    array       => ['' => ''],
-    attribute   => ['' => ''],
-    equal       => ['' => ''],
-    number      => ['' => ''],
-    separator   => ['' => ''],
-    sigil       => ['' => ''],
-    tag         => ['' => ''],
-    value       => ['' => ''],
-);
+if (-t *STDOUT) {
+    # ugly in the morning
+    %HTML::Linear::Path::xpath_wrap = (
+        array       => [BOLD . CYAN,            RESET],
+        attribute   => [BOLD . BRIGHT_YELLOW,   RESET],
+        equal       => [BOLD . YELLOW,          RESET],
+        number      => [BOLD . BRIGHT_GREEN,    RESET],
+        separator   => [BOLD . RED,             RESET],
+        sigil       => [BOLD . MAGENTA,         RESET],
+        tag         => [BOLD . BRIGHT_BLUE,     RESET],
+        value       => [BOLD . BRIGHT_WHITE,    RESET],
+    );
+}
 
 my %elem;
 for my $file (@ARGV) {
@@ -47,7 +50,14 @@ for my $xpath (sort keys %xpath) {
     if (1 < scalar keys %file) {
         say $xpath;
         for my $file (sort keys %file) {
-            say "<$file>\t$_" for @{$file{$file}};
+            for (@{$file{$file}}) {
+                if (-t *STDOUT) {
+                    print GREEN . $file . RESET;
+                } else {
+                    print $file;
+                }
+                say "\t${_}";
+            }
         }
         say '';
     }
