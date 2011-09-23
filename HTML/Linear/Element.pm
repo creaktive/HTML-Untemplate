@@ -66,22 +66,6 @@ sub as_hash {
     return $hash;
 }
 
-sub contains {
-    my ($self, $other) = @_;
-
-    confess "Can't compare different types" unless ref $other eq __PACKAGE__;
-
-    return ($self->left < $other->left) && ($self->right > $other->right) ? 1 : 0;
-}
-
-sub within {
-    my ($self, $other) = @_;
-
-    confess "Can't compare different types" unless ref $other eq __PACKAGE__;
-
-    return ($other->left < $self->left) && ($other->right > $self->right) ? 1 : 0;
-}
-
 no Moose;
 __PACKAGE__->meta->make_immutable;
 

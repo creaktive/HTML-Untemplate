@@ -1,7 +1,6 @@
 package HTML::Linear;
 use common::sense;
 
-use Data::NestedSet;
 use Moose;
 use MooseX::NonMoose;
 extends 'HTML::TreeBuilder';
@@ -41,19 +40,10 @@ after eof => sub {
     $self->deparse($self, []);
 
     my $i = 0;
-    my (@list, %uniq);
-    push @list, [ $i++, $_->depth ] for $self->as_list;
-
-    my $nodes = Data::NestedSet->new(\@list, 1)->create_nodes;
-    for (@{$nodes}) {
-        my ($i, $depth, $left, $right) = @{$_};
-        my $elem = $self->get_element($i);
-
+    my %uniq;
+    for my $elem ($self->as_list) {
         $elem->index($uniq{join ',', $elem->path}++);
         $elem->index_map($self->_uniq);
-
-        $elem->left($left);
-        $elem->right($right);
     }
 };
 
