@@ -1,0 +1,41 @@
+=encoding utf8
+
+=head1 NAME
+
+HTML::Linear - ...
+
+=head1 VERSION
+
+version 0.001
+
+=head1 METHODS
+
+=head2 deparse($node, $path)
+
+...
+
+=head1 SEE ALSO
+
+=over 4
+
+=item *
+
+L<HTML::Similarity>
+
+=item *
+
+L<XML::DifferenceMarkup>
+
+=back
+
+=head1 AUTHOR
+
+Stanislaw Pusep <stas@sysd.org>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2012 by Stanislaw Pusep.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+

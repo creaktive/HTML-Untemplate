@@ -1,7 +1,11 @@
 #!/usr/bin/env perl
+# ABSTRACT: ...
+# PODNAME: xpathify
 use common::sense;
 
 use HTML::Linear;
+
+# VERSION
 
 my $hl = HTML::Linear->new;
 #$hl->set_strict;

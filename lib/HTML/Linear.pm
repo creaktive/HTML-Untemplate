@@ -1,4 +1,5 @@
 package HTML::Linear;
+# ABSTRACT: ...
 use common::sense;
 
 use Moose;
@@ -7,6 +8,8 @@ extends 'HTML::TreeBuilder';
 
 use HTML::Linear::Element;
 use HTML::Linear::Path;
+
+# VERSION
 
 has _list       => (
     traits      => ['Array'],
@@ -46,6 +49,12 @@ after eof => sub {
         $elem->index_map($self->_uniq);
     }
 };
+
+=method deparse($node, $path)
+
+...
+
+=cut
 
 sub deparse {
     my ($self, $node, $path) = @_;
@@ -103,6 +112,13 @@ sub deparse {
     return $level;
 }
 
+=head1 SEE ALSO
+
+=for :list
+* L<HTML::Similarity>
+* L<XML::DifferenceMarkup>
+
+=cut
 no Moose;
 __PACKAGE__->meta->make_immutable;
 

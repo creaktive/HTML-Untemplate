@@ -1,11 +1,16 @@
 #!/usr/bin/env perl
+# ABSTRACT: ...
+# PODNAME: untemplate
 use common::sense;
 
 use HTML::Linear;
+use IO::Interactive qw(is_interactive);
 use Term::ANSIColor qw(:constants);
 use Tie::IxHash;
 
-my $color = -t *STDOUT ? 1 : 0;
+# VERSION
+
+my $color = is_interactive(*STDOUT);
 
 if ($color) {
     # ugly in the morning

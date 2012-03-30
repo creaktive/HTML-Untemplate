@@ -1,8 +1,11 @@
 package HTML::Linear::Path;
+# ABSTRACT: ...
 use common::sense;
 
 use JSON::XS;
 use Moose;
+
+# VERSION
 
 has json        => (
     is          => 'ro',
@@ -30,6 +33,12 @@ our %xpath_wrap = (
     value       => ['' => ''],
 );
 
+=method as_string
+
+...
+
+=cut
+
 sub as_string {
     my ($self) = @_;
     return $self->key if $self->key;
@@ -42,6 +51,12 @@ sub as_string {
 
     return $self->key($self->json->encode($ref));
 }
+
+=method as_xpath
+
+...
+
+=cut
 
 sub as_xpath {
     my ($self) = @_;

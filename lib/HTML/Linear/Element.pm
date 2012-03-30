@@ -1,10 +1,13 @@
 package HTML::Linear::Element;
+# ABSTRACT: ...
 use common::sense;
 
 use Digest::SHA;
 use Moose;
 
 use HTML::Linear::Path;
+
+# VERSION
 
 has [qw(left right)] => (is => 'rw', isa => 'Int', default => -1);
 has attributes  => (is => 'rw', isa => 'HashRef[Str]', default => sub { {} }, auto_deref => 1);
@@ -18,10 +21,20 @@ has sha         => (is => 'ro', isa => 'Digest::SHA', default => sub { new Diges
 
 use overload '""' => \&as_string, fallback => 1;
 
+=for Pod::Coverage
+BUILD
+=cut
+
 sub BUILD {
     my ($self) = @_;
     $self->attributes({%{$self->path->[-1]->attributes}});
 }
+
+=method as_string
+
+...
+
+=cut
 
 sub as_string {
     my ($self) = @_;
@@ -34,6 +47,12 @@ sub as_string {
     return $self->key($self->sha->b64digest);
 }
 
+=method as_xpath
+
+...
+
+=cut
+
 sub as_xpath {
     my ($self) = @_;
     return
@@ -42,6 +61,12 @@ sub as_xpath {
                 $_->as_xpath . ($self->index_map->{$_->address} // '')
             } $self->path;
 }
+
+=method as_hash
+
+...
+
+=cut
 
 sub as_hash {
     my ($self) = @_;
