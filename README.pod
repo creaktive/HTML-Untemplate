@@ -2,59 +2,67 @@
 
 =head1 NAME
 
-HTML::Linear - represent HTML::Tree as a flat list
+HTML::Untemplate - undo what the template engine does
 
 =head1 VERSION
 
 version 0.001
 
-=head1 ATTRIBUTES
+=head1 DESCRIPTION
 
-=head2 _list
+Despite being named similarly to L<HTML::Template>, this distribution is not directly related to it.
+Instead, it attempts to reverse the templating action, whatever the template agent used.
 
-Internal list representation.
+=head2 Why?
 
-=head2 _strict
+Suppose you have a CMS.
+Typical CMS works roughly as this (data flows bottom-down):
 
-Internal strict mode flag.
+            RDBMS
+      scripting language
+             HTML
+         HTTP server
+            (...)
+          HTTP agent
+        layout engine
+            screen
+             user
 
-=head2 _uniq
+Consider the first 3 steps: C<RDBMS =E<gt> scripting language =E<gt> HTML>
 
-Used for internal collision detection.
+This is "applying template".
 
-=head1 METHODS
+Now, consider this: C<HTML =E<gt> scripting language =E<gt> RDBMS>
 
-=head2 add_element
+I would call that "un-applying template", or "untemplate" C<:)>
 
-Add an element to the list.
+The practical application of this set of tools to assist in creation of web scrappers.
 
-=head2 as_list
+=head2 xpathify
 
-Access list as array.
+The L<xpathify> tool flatterns the HTML tree into key/value list.
+The keys are in XPath format, while the values are respective content from the HTML tree.
+Theoretically, it could be possible to reassemble the HTML tree from the flat key/value list this tool generates.
 
-=head2 count_elements
+=head2 untemplate
 
-Number of elements in list.
+The L<untemplate> tool flatterns a set of HTML documents using the algorithm from L<xpathify>.
+Then, it strips the shared key/value pairs.
+The "rest" is composed of original values fed into the template engine.
 
-=head2 get_element
+=head1 SEE ALSO
 
-Element accessor.
+=over 4
 
-=head2 set_strict
+=item *
 
-Do not group by C<id>, C<class> or C<name> attributes.
+L<HTML::Similarity>
 
-=head2 unset_strict
+=item *
 
-Group by C<id>, C<class> or C<name> attributes.
+L<XML::DifferenceMarkup>
 
-=head2 eof
-
-Overrides L<HTML::TreeBuilder> C<eof>.
-
-=head2 deparse($node, $path)
-
-Recursively scan underlying L<HTML::TreeBuilder> structure.
+=back
 
 =head1 AUTHOR
 
