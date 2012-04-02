@@ -1,5 +1,6 @@
 package HTML::Linear;
-# ABSTRACT: ...
+# ABSTRACT: represent HTML::Tree as a flat list
+use strict;
 use common::sense;
 
 use Moose;
@@ -10,6 +11,28 @@ use HTML::Linear::Element;
 use HTML::Linear::Path;
 
 # VERSION
+
+=attr _list
+
+Internal list representation.
+
+=method add_element
+
+Add an element to the list.
+
+=method as_list
+
+Access list as array.
+
+=method count_elements
+
+Number of elements in list.
+
+=method get_element
+
+Element accessor.
+
+=cut
 
 has _list       => (
     traits      => ['Array'],
@@ -24,6 +47,20 @@ has _list       => (
     },
 );
 
+=attr _strict
+
+Internal strict mode flag.
+
+=method set_strict
+
+Do not group by C<id>, C<class> or C<name> attributes.
+
+=method unset_strict
+
+Group by C<id>, C<class> or C<name> attributes.
+
+=cut
+
 has _strict => (
     traits      => ['Bool'],
     is          => 'ro',
@@ -35,7 +72,19 @@ has _strict => (
     },
 );
 
+=attr _uniq
+
+Used for internal collision detection.
+
+=cut
+
 has _uniq       => (is => 'ro', isa => 'HashRef[Str]', default => sub { {} });
+
+=method eof
+
+Overrides L<HTML::TreeBuilder> C<eof>.
+
+=cut
 
 after eof => sub {
     my ($self) = @_;
@@ -52,7 +101,7 @@ after eof => sub {
 
 =method deparse($node, $path)
 
-...
+Recursively scan underlying L<HTML::TreeBuilder> structure.
 
 =cut
 
@@ -112,13 +161,6 @@ sub deparse {
     return $level;
 }
 
-=head1 SEE ALSO
-
-=for :list
-* L<HTML::Similarity>
-* L<XML::DifferenceMarkup>
-
-=cut
 no Moose;
 __PACKAGE__->meta->make_immutable;
 

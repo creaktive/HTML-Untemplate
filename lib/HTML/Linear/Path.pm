@@ -1,5 +1,6 @@
 package HTML::Linear::Path;
-# ABSTRACT: ...
+# ABSTRACT: represent paths inside HTML::Tree
+use strict;
 use common::sense;
 
 use JSON::XS;
@@ -7,12 +8,40 @@ use Moose;
 
 # VERSION
 
+=attr json
+
+Lazy L<JSON::XS> instance.
+
+=cut
+
 has json        => (
     is          => 'ro',
     isa         => 'JSON::XS',
     default     => sub { JSON::XS->new->ascii->canonical },
     lazy        => 1,
 );
+
+=attr address
+
+Location inside L<HTML::TreeBuilder> tree.
+
+=attr attributes
+
+Element attributes.
+
+=attr key
+
+Stringified path representation.
+
+=attr strict
+
+Strict mode disables grouping by C<id>, C<class> or C<name> attributes.
+
+=attr tag
+
+Tag name.
+
+=cut
 
 has address     => (is => 'rw', isa => 'Str', required => 1);
 has attributes  => (is => 'ro', isa => 'HashRef[Str]', required => 1, auto_deref => 1);
@@ -35,7 +64,7 @@ our %xpath_wrap = (
 
 =method as_string
 
-...
+Build a quick & dirty string representation of a path the L<HTML::TreeBuilder> structure.
 
 =cut
 
@@ -47,14 +76,14 @@ sub as_string {
         _tag    => $self->tag,
         addr    => $self->address,
     };
-    $ref->{attr} = $self->attributes if keys $self->attributes;
+    $ref->{attr} = $self->attributes if keys %{$self->attributes};
 
     return $self->key($self->json->encode($ref));
 }
 
 =method as_xpath
 
-...
+Build a nice XPath representation of a path inside the L<HTML::TreeBuilder> structure.
 
 =cut
 
@@ -81,6 +110,12 @@ sub as_xpath {
     return $xpath;
 }
 
+=func _quote
+
+Quote attribute values for XPath representation.
+
+=cut
+
 sub _quote {
     local $_ = $_[0];
 
@@ -92,6 +127,12 @@ sub _quote {
 
     return "'$_'";
 }
+
+=func _wrap
+
+Help to make a fancy XPath.
+
+=cut
 
 sub _wrap {
     return

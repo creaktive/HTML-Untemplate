@@ -2,31 +2,59 @@
 
 =head1 NAME
 
-HTML::Linear - ...
+HTML::Linear - represent HTML::Tree as a flat list
 
 =head1 VERSION
 
 version 0.001
 
+=head1 ATTRIBUTES
+
+=head2 _list
+
+Internal list representation.
+
+=head2 _strict
+
+Internal strict mode flag.
+
+=head2 _uniq
+
+Used for internal collision detection.
+
 =head1 METHODS
+
+=head2 add_element
+
+Add an element to the list.
+
+=head2 as_list
+
+Access list as array.
+
+=head2 count_elements
+
+Number of elements in list.
+
+=head2 get_element
+
+Element accessor.
+
+=head2 set_strict
+
+Do not group by C<id>, C<class> or C<name> attributes.
+
+=head2 unset_strict
+
+Group by C<id>, C<class> or C<name> attributes.
+
+=head2 eof
+
+Overrides L<HTML::TreeBuilder> C<eof>.
 
 =head2 deparse($node, $path)
 
-...
-
-=head1 SEE ALSO
-
-=over 4
-
-=item *
-
-L<HTML::Similarity>
-
-=item *
-
-L<XML::DifferenceMarkup>
-
-=back
+Recursively scan underlying L<HTML::TreeBuilder> structure.
 
 =head1 AUTHOR
 

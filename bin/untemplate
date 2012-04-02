@@ -1,16 +1,57 @@
 #!/usr/bin/env perl
-# ABSTRACT: ...
+# ABSTRACT: analyze several HTML documents based on the same template
 # PODNAME: untemplate
+use strict;
 use common::sense;
 
+use Getopt::Long;
 use HTML::Linear;
 use IO::Interactive qw(is_interactive);
+use Pod::Usage;
 use Term::ANSIColor qw(:constants);
 use Tie::IxHash;
 
 # VERSION
 
-my $color = is_interactive(*STDOUT);
+=head1 SYNOPSIS
+
+    untemplate [options] HTML1 HTML2 [HTML3] [...]
+
+=head1 DESCRIPTION
+
+Takes multiple HTML documents generated using the same template and attempts to extract only the data inserted into original template.
+
+=head1 OPTIONS
+
+=over 4
+
+=item --help
+
+This.
+
+=item --[no]color
+
+Enable syntax highlight for XPath.
+By default, enabled automatically on interactive terminals.
+
+=item --[no]strict
+
+Strict mode disables grouping by C<id>, C<class> or C<name> attributes.
+The grouping is enabled by default.
+
+=back
+
+=cut
+
+GetOptions(
+    q(help)     => \my $help,
+    q(color!)   => \my $color,
+    q(strict!)  => \my $strict,
+) or pod2usage(q(-verbose) => 1);
+pod2usage(q(-verbose) => 1)
+    if $help or $#ARGV < 1;
+
+$color //= is_interactive(*STDOUT);
 
 if ($color) {
     # ugly in the morning
@@ -29,7 +70,10 @@ if ($color) {
 tie my %elem, 'Tie::IxHash';
 for my $file (@ARGV) {
     my $hl = HTML::Linear->new;
-    #$hl->set_strict;
+
+    $hl->set_strict
+        if $strict // 0;
+
     $hl->parse_file($file)
         or die "Can't parse $file: $!";
 

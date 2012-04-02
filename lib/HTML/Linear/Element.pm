@@ -1,5 +1,6 @@
 package HTML::Linear::Element;
-# ABSTRACT: ...
+# ABSTRACT: represent elements to populate HTML::Linear
+use strict;
 use common::sense;
 
 use Digest::SHA;
@@ -9,7 +10,40 @@ use HTML::Linear::Path;
 
 # VERSION
 
-has [qw(left right)] => (is => 'rw', isa => 'Int', default => -1);
+=attr attributes
+
+Element attributes.
+
+=attr content
+
+Element content.
+
+=attr depth
+
+Depth level of an element inside a L<HTML::TreeBuilder> structure.
+
+=attr index
+
+Index to preserve elements order.
+
+=attr index_map
+
+Used for internal collision detection.
+
+=attr key
+
+Stringified element representation.
+
+=attr path
+
+Store representations of paths inside C<HTML::TreeBuilder> structure (L<HTML::Linear::Path>).
+
+=attr sha
+
+Lazy L<Digest::SHA> (256-bit) representation.
+
+=cut
+
 has attributes  => (is => 'rw', isa => 'HashRef[Str]', default => sub { {} }, auto_deref => 1);
 has content     => (is => 'rw', isa => 'Str', default => '');
 has depth       => (is => 'ro', isa => 'Int', required => 1);
@@ -32,7 +66,7 @@ sub BUILD {
 
 =method as_string
 
-...
+Stringified signature of an element.
 
 =cut
 
@@ -49,7 +83,7 @@ sub as_string {
 
 =method as_xpath
 
-...
+Build a nice XPath representation of a path inside the L<HTML::TreeBuilder> structure.
 
 =cut
 
@@ -64,7 +98,7 @@ sub as_xpath {
 
 =method as_hash
 
-...
+Linearize element as an associative array (Perl hash).
 
 =cut
 
@@ -73,7 +107,7 @@ sub as_hash {
     my $hash = {};
     my $xpath = $self->as_xpath . HTML::Linear::Path::_wrap(separator => '/');
 
-    for my $key (sort keys $self->attributes) {
+    for my $key (sort keys %{$self->attributes}) {
         $hash->{
             $xpath
             . HTML::Linear::Path::_wrap(sigil       => '@')

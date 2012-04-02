@@ -1,0 +1,54 @@
+# ABSTRACT: undo what the template engine does
+# PODNAME: HTML::Untemplate
+
+# VERSION
+
+=head1 DESCRIPTION
+
+Despite being named similarly to L<HTML::Template>, this distribution is not directly related to it.
+Instead, it attempts to reverse the templating action, whatever the template agent used.
+
+=head2 Why?
+
+Suppose you have a CMS.
+Typical CMS works roughly as this (data flows bottom-down):
+
+            RDBMS
+      scripting language
+             HTML
+         HTTP server
+            (...)
+          HTTP agent
+        layout engine
+            screen
+             user
+
+Consider the first 3 steps: C<RDBMS =E<gt> scripting language =E<gt> HTML>
+
+This is "applying template".
+
+Now, consider this: C<HTML =E<gt> scripting language =E<gt> RDBMS>
+
+I would call that "un-applying template", or "untemplate" C<:)>
+
+The practical application of this set of tools to assist in creation of web scrappers.
+
+=head2 xpathify
+
+The L<xpathify> tool flatterns the HTML tree into key/value list.
+The keys are in XPath format, while the values are respective content from the HTML tree.
+Theoretically, it could be possible to reassemble the HTML tree from the flat key/value list this tool generates.
+
+=head2 untemplate
+
+The L<untemplate> tool flatterns a set of HTML documents using the algorithm from L<xpathify>.
+Then, it strips the shared key/value pairs.
+The "rest" is composed of original values fed into the template engine.
+
+=head1 SEE ALSO
+
+=for :list
+* L<HTML::Similarity>
+* L<XML::DifferenceMarkup>
+
+=cut

@@ -1,19 +1,63 @@
 #!/usr/bin/env perl
-# ABSTRACT: ...
+# ABSTRACT: output HTML document as a flat XPath/content list
 # PODNAME: xpathify
+use strict;
 use common::sense;
 
+use Getopt::Long;
 use HTML::Linear;
+use Pod::Usage;
 
 # VERSION
 
+=head1 SYNOPSIS
+
+    xpathify [options] HTML
+
+=head1 DESCRIPTION
+
+Represents a typical HTML document in a very verbose two-column mode.
+The first column is a XPath which locates each element inside the HTML tree.
+The second column is a respective content (if any).
+
+    /html/head/title/text() test 1
+    /html/body/h1/text()    test 2
+    /html/body/p[1]/text()  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+
+=head1 OPTIONS
+
+=over 4
+
+=item --help
+
+This.
+
+=item --[no]strict
+
+Strict mode disables grouping by C<id>, C<class> or C<name> attributes.
+The grouping is enabled by default.
+
+=back
+
+=cut
+
+GetOptions(
+    q(help)     => \my $help,
+    q(strict!)  => \my $strict,
+) or pod2usage(q(-verbose) => 1);
+pod2usage(q(-verbose) => 1)
+    if $help or $#ARGV != 0;
+
 my $hl = HTML::Linear->new;
-#$hl->set_strict;
+$hl->set_strict
+    if $strict;
 $hl->parse_file($ARGV[0])
     or die "Can't parse $ARGV[0]: $!";
 
 for my $el ($hl->as_list) {
     my $hash = $el->as_hash;
-    say $_ . "\t" . ($hash->{$_} =~ s/\s+/ /grs)
-        for sort grep { not m{/\@(?:class|id)$} } keys %{$hash};
+    for (sort grep { not m{/\@(?:class|id)$} } keys %{$hash}) {
+        $hash->{$_} =~ s/\s+/ /gs;
+        say $_ . "\t" . $hash->{$_};
+    }
 }
