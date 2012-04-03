@@ -10,6 +10,16 @@ use HTML::Linear::Path;
 
 # VERSION
 
+=head1 SYNOPSIS
+
+    use HTML::Linear::Element;
+    use HTML::Linear::Path;
+
+    my $el = HTML::Linear::Element->new({
+        depth   => 0,
+        path    => [ HTML::Linear::Path->new({ address => q(...), tag => q(...) }) ],
+    })
+
 =attr attributes
 
 Element attributes.

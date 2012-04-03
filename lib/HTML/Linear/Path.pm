@@ -8,6 +8,19 @@ use Any::Moose;
 
 # VERSION
 
+=head1 SYNOPSIS
+
+    use HTML::Linear::Path;
+
+    my $level = HTML::Linear::Path->new({
+        address     => q(0.1.1.3.0),
+        attributes  => {
+            id  => q(li1),
+        },
+        strict      => 0,
+        tag         => q(li),
+    });
+
 =attr json
 
 Lazy L<JSON::XS> instance.

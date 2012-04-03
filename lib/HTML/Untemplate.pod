@@ -33,7 +33,9 @@ I would call that "un-applying template", or "untemplate" C<:)>
 
 The practical application of this set of tools to assist in creation of web scrappers.
 
-=head2 xpathify
+=head2 CLI tools
+
+=head3 xpathify
 
 The L<xpathify> tool flatterns the HTML tree into key/value list:
 
@@ -154,7 +156,7 @@ Becomes:
 The keys are in XPath format, while the values are respective content from the HTML tree.
 Theoretically, it could be possible to reassemble the HTML tree from the flat key/value list this tool generates.
 
-=head2 untemplate
+=head3 untemplate
 
 The L<untemplate> tool flatterns a set of HTML documents using the algorithm from L<xpathify>.
 Then, it strips the shared key/value pairs.
@@ -649,9 +651,19 @@ And this is how the result actually looks like with some simple real-world examp
 
 =end html
 
+=head2 Modules
+
+May be used to serialize/flattern HTML documents:
+
+=for :list
+* L<HTML::Linear> - represent L<HTML::Tree> as a flat list
+* L<HTML::Linear::Element> - represent elements to populate L<HTML::Linear>
+* L<HTML::Linear::Path> - represent paths inside L<HTML::Tree>
+
 =head1 SEE ALSO
 
 =for :list
+* L<HTML::TreeBuilder>
 * L<HTML::Similarity>
 * L<XML::DifferenceMarkup>
 

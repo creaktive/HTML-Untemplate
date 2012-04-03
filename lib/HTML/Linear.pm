@@ -12,6 +12,19 @@ use HTML::Linear::Path;
 
 # VERSION
 
+=head1 SYNOPSIS
+
+    use Data::Printer;
+    use HTML::Linear;
+
+    my $hl = HTML::Linear->new;
+    $hl->parse_file(q(index.html));
+
+    for my $el ($hl->as_list) {
+        my $hash = $el->as_hash;
+        p $hash;
+    }
+
 =attr _list
 
 Internal list representation.
