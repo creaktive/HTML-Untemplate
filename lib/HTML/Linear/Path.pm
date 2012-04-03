@@ -64,6 +64,27 @@ has tag         => (is => 'ro', isa => 'Str', required => 1);
 
 use overload '""' => \&as_string, fallback => 1;
 
+=head1 GLOBALS
+
+=head2 %HTML::Linear::Path::xpath_wrap
+
+Wrap XPath components to produce fancy syntax highlight.
+
+The format is:
+
+    (
+        array       => ['' => ''],
+        attribute   => ['' => ''],
+        equal       => ['' => ''],
+        number      => ['' => ''],
+        separator   => ['' => ''],
+        sigil       => ['' => ''],
+        tag         => ['' => ''],
+        value       => ['' => ''],
+    )
+
+=cut
+
 our %xpath_wrap = (
     array       => ['' => ''],
     attribute   => ['' => ''],
