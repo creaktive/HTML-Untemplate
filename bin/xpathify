@@ -3,6 +3,7 @@
 # PODNAME: xpathify
 use strict;
 use common::sense;
+use open ':locale';
 
 use Getopt::Long;
 use HTML::Linear;
