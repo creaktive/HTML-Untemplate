@@ -35,7 +35,136 @@ The practical application of this set of tools to assist in creation of web scra
 
 =head2 xpathify
 
-The L<xpathify> tool flatterns the HTML tree into key/value list.
+The L<xpathify> tool flatterns the HTML tree into key/value list:
+
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Hello HTML</title>
+        </head>
+        <body>
+            <h1>Hello World!</h1>
+            <p>This is a sample HTML</p>
+            Beware!
+            <p>HTML is <b>not</b> XML!</p>
+            Have a nice day.
+        </body>
+    </html>
+
+Becomes:
+
+=begin html
+
+    <tt><font face='fixedsys, lucida console, terminal, vga, monospace'
+    style=
+    'line-height: 1; letter-spacing: 0; font-size: 12pt'><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>html</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>head</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>title</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>text()</span><span style=
+    'color: gray; background: black;'>&nbsp;Hello&nbsp;HTML&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
+    </span></font></tt><tt><font face=
+    'fixedsys, lucida console, terminal, vga, monospace' style=
+    'line-height: 1; letter-spacing: 0; font-size: 12pt'><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>html</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>body</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>h1</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>text()</span><span style=
+    'color: gray; background: black;'>&nbsp;&nbsp;&nbsp;&nbsp;Hello&nbsp;World!&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
+    </span></font></tt><tt><font face=
+    'fixedsys, lucida console, terminal, vga, monospace' style=
+    'line-height: 1; letter-spacing: 0; font-size: 12pt'><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>html</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>body</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>p</span><span style=
+    'color: cyan; background: black;'>[</span><span style=
+    'color: white; background: black;'>1</span><span style=
+    'color: cyan; background: black;'>]</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>text()</span><span style=
+    'color: gray; background: black;'>&nbsp;&nbsp;This&nbsp;is&nbsp;a&nbsp;sample&nbsp;HTML&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
+    </span></font></tt><tt><font face=
+    'fixedsys, lucida console, terminal, vga, monospace' style=
+    'line-height: 1; letter-spacing: 0; font-size: 12pt'><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>html</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>body</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>text()</span><span style=
+    'color: gray; background: black;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Beware!&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
+    </span></font></tt><tt><font face=
+    'fixedsys, lucida console, terminal, vga, monospace' style=
+    'line-height: 1; letter-spacing: 0; font-size: 12pt'><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>html</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>body</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>p</span><span style=
+    'color: cyan; background: black;'>[</span><span style=
+    'color: white; background: black;'>2</span><span style=
+    'color: cyan; background: black;'>]</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>text()</span><span style=
+    'color: gray; background: black;'>&nbsp;&nbsp;HTML&nbsp;is&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
+    </span></font></tt><tt><font face=
+    'fixedsys, lucida console, terminal, vga, monospace' style=
+    'line-height: 1; letter-spacing: 0; font-size: 12pt'><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>html</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>body</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>p</span><span style=
+    'color: cyan; background: black;'>[</span><span style=
+    'color: white; background: black;'>2</span><span style=
+    'color: cyan; background: black;'>]</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>b</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>text()</span><span style=
+    'color: gray; background: black;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;not&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
+    </span></font></tt><tt><font face=
+    'fixedsys, lucida console, terminal, vga, monospace' style=
+    'line-height: 1; letter-spacing: 0; font-size: 12pt'><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>html</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>body</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>p</span><span style=
+    'color: cyan; background: black;'>[</span><span style=
+    'color: white; background: black;'>2</span><span style=
+    'color: cyan; background: black;'>]</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>text()</span><span style=
+    'color: gray; background: black;'>&nbsp;&nbsp;&nbsp;XML!&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
+    </span></font></tt><tt><font face=
+    'fixedsys, lucida console, terminal, vga, monospace' style=
+    'line-height: 1; letter-spacing: 0; font-size: 12pt'><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>html</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>body</span><span style=
+    'color: red; background: black;'>/</span><span style=
+    'color: white; background: black;'>text()</span><span style=
+    'color: gray; background: black;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Have&nbsp;a&nbsp;nice&nbsp;day.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
+    </span></font></tt>
+
+=end html
+
 The keys are in XPath format, while the values are respective content from the HTML tree.
 Theoretically, it could be possible to reassemble the HTML tree from the flat key/value list this tool generates.
 
