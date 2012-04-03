@@ -3,8 +3,8 @@ package HTML::Linear;
 use strict;
 use common::sense;
 
-use Moose;
-use MooseX::NonMoose;
+use Any::Moose;
+use Any::Moose qw(X::NonMoose);
 extends 'HTML::TreeBuilder';
 
 use HTML::Linear::Element;
@@ -161,7 +161,7 @@ sub deparse {
     return $level;
 }
 
-no Moose;
+no Any::Moose;
 __PACKAGE__->meta->make_immutable;
 
 1;

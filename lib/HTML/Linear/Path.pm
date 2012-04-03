@@ -4,7 +4,7 @@ use strict;
 use common::sense;
 
 use JSON::XS;
-use Moose;
+use Any::Moose;
 
 # VERSION
 
@@ -141,7 +141,7 @@ sub _wrap {
         . $xpath_wrap{$_[0]}->[1];
 }
 
-no Moose;
+no Any::Moose;
 __PACKAGE__->meta->make_immutable;
 
 1;

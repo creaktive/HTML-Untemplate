@@ -4,7 +4,7 @@ use strict;
 use common::sense;
 
 use Digest::SHA;
-use Moose;
+use Any::Moose;
 
 use HTML::Linear::Path;
 
@@ -125,7 +125,7 @@ sub as_hash {
     return $hash;
 }
 
-no Moose;
+no Any::Moose;
 __PACKAGE__->meta->make_immutable;
 
 1;
