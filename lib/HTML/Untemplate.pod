@@ -67,9 +67,7 @@ Becomes:
     'color: red; background: black;'>/</span><span style=
     'color: white; background: black;'>text()</span><span style=
     'color: gray; background: black;'>&nbsp;Hello&nbsp;HTML&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
-    </span></font></tt><tt><font face=
-    'fixedsys, lucida console, terminal, vga, monospace' style=
-    'line-height: 1; letter-spacing: 0; font-size: 12pt'><span style=
+    </span><span style=
     'color: red; background: black;'>/</span><span style=
     'color: white; background: black;'>html</span><span style=
     'color: red; background: black;'>/</span><span style=
@@ -79,9 +77,7 @@ Becomes:
     'color: red; background: black;'>/</span><span style=
     'color: white; background: black;'>text()</span><span style=
     'color: gray; background: black;'>&nbsp;&nbsp;&nbsp;&nbsp;Hello&nbsp;World!&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
-    </span></font></tt><tt><font face=
-    'fixedsys, lucida console, terminal, vga, monospace' style=
-    'line-height: 1; letter-spacing: 0; font-size: 12pt'><span style=
+    </span><span style=
     'color: red; background: black;'>/</span><span style=
     'color: white; background: black;'>html</span><span style=
     'color: red; background: black;'>/</span><span style=
@@ -94,9 +90,7 @@ Becomes:
     'color: red; background: black;'>/</span><span style=
     'color: white; background: black;'>text()</span><span style=
     'color: gray; background: black;'>&nbsp;&nbsp;This&nbsp;is&nbsp;a&nbsp;sample&nbsp;HTML&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
-    </span></font></tt><tt><font face=
-    'fixedsys, lucida console, terminal, vga, monospace' style=
-    'line-height: 1; letter-spacing: 0; font-size: 12pt'><span style=
+    </span><span style=
     'color: red; background: black;'>/</span><span style=
     'color: white; background: black;'>html</span><span style=
     'color: red; background: black;'>/</span><span style=
@@ -104,9 +98,7 @@ Becomes:
     'color: red; background: black;'>/</span><span style=
     'color: white; background: black;'>text()</span><span style=
     'color: gray; background: black;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Beware!&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
-    </span></font></tt><tt><font face=
-    'fixedsys, lucida console, terminal, vga, monospace' style=
-    'line-height: 1; letter-spacing: 0; font-size: 12pt'><span style=
+    </span><span style=
     'color: red; background: black;'>/</span><span style=
     'color: white; background: black;'>html</span><span style=
     'color: red; background: black;'>/</span><span style=
@@ -119,9 +111,7 @@ Becomes:
     'color: red; background: black;'>/</span><span style=
     'color: white; background: black;'>text()</span><span style=
     'color: gray; background: black;'>&nbsp;&nbsp;HTML&nbsp;is&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
-    </span></font></tt><tt><font face=
-    'fixedsys, lucida console, terminal, vga, monospace' style=
-    'line-height: 1; letter-spacing: 0; font-size: 12pt'><span style=
+    </span><span style=
     'color: red; background: black;'>/</span><span style=
     'color: white; background: black;'>html</span><span style=
     'color: red; background: black;'>/</span><span style=
@@ -136,9 +126,7 @@ Becomes:
     'color: red; background: black;'>/</span><span style=
     'color: white; background: black;'>text()</span><span style=
     'color: gray; background: black;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;not&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
-    </span></font></tt><tt><font face=
-    'fixedsys, lucida console, terminal, vga, monospace' style=
-    'line-height: 1; letter-spacing: 0; font-size: 12pt'><span style=
+    </span><span style=
     'color: red; background: black;'>/</span><span style=
     'color: white; background: black;'>html</span><span style=
     'color: red; background: black;'>/</span><span style=
@@ -151,9 +139,7 @@ Becomes:
     'color: red; background: black;'>/</span><span style=
     'color: white; background: black;'>text()</span><span style=
     'color: gray; background: black;'>&nbsp;&nbsp;&nbsp;XML!&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='color: black; background: black;'><br>
-    </span></font></tt><tt><font face=
-    'fixedsys, lucida console, terminal, vga, monospace' style=
-    'line-height: 1; letter-spacing: 0; font-size: 12pt'><span style=
+    </span><span style=
     'color: red; background: black;'>/</span><span style=
     'color: white; background: black;'>html</span><span style=
     'color: red; background: black;'>/</span><span style=
