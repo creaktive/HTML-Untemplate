@@ -5,6 +5,7 @@ use strict;
 use common::sense;
 use open ':locale';
 
+use File::Basename;
 use Getopt::Long;
 use HTML::Linear;
 use IO::Interactive qw(is_interactive);
@@ -41,6 +42,14 @@ Strict mode disables grouping by C<id>, C<class> or C<name> attributes.
 The grouping is enabled by default.
 
 =back
+
+=head1 CAVEATS
+
+Trying to I<untemplate> HTML documents B<not> based on the same template, the results will be empty.
+
+Unfortunately, employing any kind of document identifier as part of element classe/id
+(common practice in L<WordPress|http://wordpress.org/> themes)
+is enough to constitute "not same template".
 
 =cut
 
@@ -104,10 +113,11 @@ for my $xpath (keys %xpath) {
         say $xpath;
         for my $file (sort keys %file) {
             for (@{$file{$file}}) {
+                my $basename = basename($file);
                 if ($color) {
-                    print GREEN . $file . RESET;
+                    print GREEN . $basename . RESET;
                 } else {
-                    print $file;
+                    print $basename;
                 }
                 say "\t${_}";
             }
