@@ -55,7 +55,7 @@ The grouping is enabled by default.
 
 Trying to I<untemplate> HTML documents B<not> based on the same template, the results will be empty.
 
-Unfortunately, employing any kind of document identifier as part of element classe/id
+Unfortunately, employing any kind of document identifier as part of element class/id
 (common practice in L<WordPress|http://wordpress.org/> themes)
 is enough to constitute "not same template".
 
