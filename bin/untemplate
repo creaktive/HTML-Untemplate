@@ -6,9 +6,11 @@ use common::sense;
 use open ':locale';
 
 use File::Basename;
+use File::Temp;
 use Getopt::Long;
 use HTML::Linear;
 use IO::Interactive qw(is_interactive);
+use Module::Load qw(load);
 use Pod::Usage;
 use Term::ANSIColor qw(:constants);
 use Tie::IxHash;
@@ -22,6 +24,8 @@ use Tie::IxHash;
 =head1 DESCRIPTION
 
 Takes multiple HTML documents generated using the same template and attempts to extract only the data inserted into original template.
+
+Accepts URL if L<AnyEvent::Net::Curl::Queued> is present.
 
 =head1 OPTIONS
 
@@ -42,6 +46,10 @@ Strict mode disables grouping by C<id>, C<class> or C<name> attributes.
 The grouping is enabled by default.
 
 =back
+
+=head1 EXAMPLES
+
+    untemplate --color http://bash.org/?1839 http://bash.org/?2486 | less -R
 
 =head1 CAVEATS
 
@@ -77,6 +85,9 @@ if ($color) {
     );
 }
 
+eval { load('YADA') };
+fetch_documents() unless $@;
+
 tie my %elem, 'Tie::IxHash';
 for my $file (@ARGV) {
     my $hl = HTML::Linear->new;
@@ -84,10 +95,10 @@ for my $file (@ARGV) {
     $hl->set_strict
         if $strict // 0;
 
-    $hl->parse_file($file)
+    $hl->parse_file('' . $file)
         or die "Can't parse $file: $!";
 
-    push @{$elem{$_}}, [ $_ => $file ]
+    push @{$elem{$_}}, [ $_ => basename($file) ]
         for $hl->as_list;
 }
 
@@ -113,15 +124,46 @@ for my $xpath (keys %xpath) {
         say $xpath;
         for my $file (sort keys %file) {
             for (@{$file{$file}}) {
-                my $basename = basename($file);
                 if ($color) {
-                    print GREEN . $basename . RESET;
+                    print GREEN . $file . RESET;
                 } else {
-                    print $basename;
+                    print $file;
                 }
                 say "\t${_}";
             }
         }
         say '';
     }
+}
+
+sub fetch_documents {
+    my (@local, @remote);
+    for (@ARGV) {
+        if (m{^https?://}) {
+            push @remote, $_;
+        } else {
+            push @local, $_;
+        }
+    }
+    return unless @remote;
+
+    @ARGV = @local;
+
+    my $q = YADA->new;
+    for (@remote) {
+        my $tmp = File::Temp->new(TEMPLATE => 'html-XXXX');
+        $q->append(sub {
+            YADA::Worker->new({
+                initial_url => $_,
+                on_init     => sub {
+                    $_[0]->setopt(writedata => $tmp);
+                },
+                on_finish   => sub {
+                    $tmp->flush;
+                    push @ARGV, $tmp unless $_[0]->has_error;
+                },
+            })
+        });
+    }
+    $q->wait;
 }
