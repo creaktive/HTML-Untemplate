@@ -3,6 +3,7 @@
 # PODNAME: untemplate
 use strict;
 use common::sense;
+use feature qw(say);
 use open ':locale';
 
 use File::Basename;
