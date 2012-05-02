@@ -46,6 +46,17 @@ By default, enabled automatically on interactive terminals.
 Strict mode disables grouping by C<id>, C<class> or C<name> attributes.
 The grouping is enabled by default.
 
+=item --unmangle=regex
+
+Specify regex(es) to unmangle C<id>/C<class> attributes.
+Some CMS (WordPress) insert unique identifiers into HTML elements, like:
+
+    <body class="post-id-12345">
+
+This tend to break HTML tree analysis.
+To fix the above case, use C<--unmangle 'post-id-\d+'>.
+Multiple unmanglers are accepted (C<--unmangle a --unmangle b>).
+
 =back
 
 =head1 EXAMPLES
@@ -63,9 +74,10 @@ is enough to constitute "not same template".
 =cut
 
 GetOptions(
-    q(help)     => \my $help,
-    q(color!)   => \my $color,
-    q(strict!)  => \my $strict,
+    q(help)         => \my $help,
+    q(color!)       => \my $color,
+    q(strict!)      => \my $strict,
+    q(unmangle=s)   => \my @unmangle,
 ) or pod2usage(q(-verbose) => 1);
 pod2usage(q(-verbose) => 1)
     if $help or $#ARGV < 1;
@@ -107,6 +119,18 @@ tie my %xpath, 'Tie::IxHash';
 while (my ($key, $list) = each %elem) {
     for (@{$list}) {
         my ($el, $file) = @{$_};
+
+        if (@unmangle) {
+            for my $path (@{$el->path}) {
+                for my $attr (keys %{$path->attributes}) {
+                    next if $attr !~ /^(?:class|id)$/;
+                    for my $unmangle (@unmangle) {
+                        $path->attributes->{$attr} =~ s/$unmangle//;
+                    }
+                }
+            }
+        }
+
         my $hash = $el->as_hash;
         $xpath{$_}->{$hash->{$_}} = $file
             for keys %{$hash};
@@ -152,7 +176,11 @@ sub fetch_documents {
 
     my $q = YADA->new;
     for (@remote) {
-        my $tmp = File::Temp->new(TEMPLATE => 'html-XXXX');
+        my $tmp = File::Temp->new(
+            SUFFIX      => '.html',
+            TEMPLATE    => 'doc-XXXX',
+            TMPDIR      => 1,
+        );
         $q->append(sub {
             YADA::Worker->new({
                 initial_url => $_,
