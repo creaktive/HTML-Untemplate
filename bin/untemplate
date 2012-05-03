@@ -71,6 +71,8 @@ Unfortunately, employing any kind of document identifier as part of element clas
 (common practice in L<WordPress|http://wordpress.org/> themes)
 is enough to constitute "not same template".
 
+See the C<--unmangle> option for a work-around.
+
 =cut
 
 GetOptions(

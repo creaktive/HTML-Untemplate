@@ -45,6 +45,10 @@ By default, enabled automatically on interactive terminals.
 Strict mode disables grouping by C<id>, C<class> or C<name> attributes.
 The grouping is enabled by default.
 
+=item --[no]weight
+
+Print XPath weight on a second column.
+
 =back
 
 =cut
@@ -53,11 +57,13 @@ GetOptions(
     q(help)     => \my $help,
     q(color!)   => \my $color,
     q(strict!)  => \my $strict,
+    q(weight!)  => \my $weight,
 ) or pod2usage(q(-verbose) => 1);
 pod2usage(q(-verbose) => 1)
     if $help or $#ARGV != 0;
 
 $color //= is_interactive(*STDOUT);
+$weight //= 0;
 
 if ($color) {
     # ugly in the morning
@@ -83,6 +89,9 @@ for my $el ($hl->as_list) {
     my $hash = $el->as_hash;
     for (sort grep { not m{/\@(?:class|id)$} } keys %{$hash}) {
         $hash->{$_} =~ s/\s+/ /gs;
-        say $_ . "\t" . $hash->{$_};
+        my @line = $_;
+        push @line, $el->weight if $weight;
+        push @line, $hash->{$_};
+        say join("\t", @line);
     }
 }

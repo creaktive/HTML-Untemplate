@@ -66,6 +66,36 @@ use overload '""' => \&as_string, fallback => 1;
 
 =head1 GLOBALS
 
+=head2 %HTML::Linear::Path::tag_weight
+
+Table of HTML tag weights.
+Borrowed from L<TexNet32 - WWW filters|http://publish.uwo.ca/~craven/texnet32/wwwnet32.htm>.
+
+=cut
+
+our %tag_weight = (
+    title       => 15,
+    h1          => 10,
+    h2          => 9,
+    h3          => 8,
+    h4          => 7,
+    h5          => 6,
+    h6          => 5,
+    center      => 3,
+    strong      => 2,
+    b           => 2,
+    u           => 1,
+    em          => 1,
+    a           => 1,
+    sup         => -1,
+    sub         => -1,
+    samp        => -1,
+    pre         => -1,
+    kbd         => -1,
+    code        => -1,
+    blockquote  => -1,
+);
+
 =head2 %HTML::Linear::Path::xpath_wrap
 
 Wrap XPath components to produce fancy syntax highlight.
@@ -142,6 +172,16 @@ sub as_xpath {
     }
 
     return $xpath;
+}
+
+=method weight
+
+Return tag weight.
+
+=cut
+
+sub weight {
+    $tag_weight{$_[0]->tag} // 0;
 }
 
 =func _quote

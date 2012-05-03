@@ -4,6 +4,7 @@ use strict;
 use common::sense;
 
 use Digest::SHA;
+use List::Util qw(sum);
 use Any::Moose;
 
 use HTML::Linear::Path;
@@ -133,6 +134,16 @@ sub as_hash {
         unless $self->content =~ m{^\s*$}s;
 
     return $hash;
+}
+
+=method weight
+
+Return XPath weight.
+
+=cut
+
+sub weight {
+    sum map +$_->weight, @{$_[0]->path};
 }
 
 no Any::Moose;
