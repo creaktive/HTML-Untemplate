@@ -140,6 +140,7 @@ sub deparse {
             HTML::Linear::Element->new({
                 depth   => $node->depth,
                 path    => [ @{$path}, $level ],
+                strict  => $self->_strict,
             })
         );
     }
@@ -155,6 +156,7 @@ sub deparse {
                     content => $child,
                     depth   => $node->depth,
                     path    => [ @{$path}, $level ],
+                    strict  => $self->_strict,
                 })
             );
         }

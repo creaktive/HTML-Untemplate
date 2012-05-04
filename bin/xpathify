@@ -87,7 +87,7 @@ $hl->parse_file($ARGV[0])
 
 for my $el ($hl->as_list) {
     my $hash = $el->as_hash;
-    for (sort grep { not m{/\@(?:class|id)$} } keys %{$hash}) {
+    for (sort keys %{$hash}) {
         $hash->{$_} =~ s/\s+/ /gs;
         my @line = $_;
         push @line, $el->weight if $weight;

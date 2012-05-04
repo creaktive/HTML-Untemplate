@@ -48,7 +48,7 @@ Stringified path representation.
 
 =attr strict
 
-Strict mode disables grouping by C<id>, C<class> or C<name> attributes.
+Strict mode disables grouping by tags/attributes listed in L</%HTML::Linear::Path::groupby>.
 
 =attr tag
 
@@ -65,6 +65,22 @@ has tag         => (is => 'ro', isa => 'Str', required => 1);
 use overload '""' => \&as_string, fallback => 1;
 
 =head1 GLOBALS
+
+=head2 %HTML::Linear::Path::groupby
+
+Tags/attributes significant as XPath filters.
+C<@class>/C<@id> are the most obvious; we also use C<meta/@property>, C<input/@name> and several others.
+
+=cut
+
+our %groupby = (
+    class       => [qw(*)],
+    id          => [qw(*)],
+    name        => [qw(input meta)],
+    'http-equiv'=> [qw(meta)],
+    property    => [qw(meta)],
+    rel         => [qw(link)],
+);
 
 =head2 %HTML::Linear::Path::tag_weight
 
@@ -157,13 +173,13 @@ sub as_xpath {
     my $xpath = _wrap(separator => '/') . _wrap(tag => $self->tag);
 
     unless ($self->strict) {
-        for (qw(id class name)) {
-            if ($self->attributes->{$_}) {
+        for my $attr (keys %groupby) {
+            if (_isgroup($self->tag, $attr) and $self->attributes->{$attr}) {
                 $xpath .= _wrap(array       => '[');
                 $xpath .= _wrap(sigil       => '@');
-                $xpath .= _wrap(attribute   => $_);
+                $xpath .= _wrap(attribute   => $attr);
                 $xpath .= _wrap(equal       => '=');
-                $xpath .= _wrap(value       => _quote($self->attributes->{$_}));
+                $xpath .= _wrap(value       => _quote($self->attributes->{$attr}));
                 $xpath .= _wrap(array       => ']');
 
                 last;
@@ -213,6 +229,21 @@ sub _wrap {
         $xpath_wrap{$_[0]}->[0]
         . $_[1]
         . $xpath_wrap{$_[0]}->[1];
+}
+
+=func _isgroup($tag, $attribute)
+
+Checks if C<$tag>/C<$attribute> tuple matches L</%HTML::Linear::Path::groupby>.
+
+=cut
+
+sub _isgroup {
+    my ($tag, $attr) = @_;
+    1 and grep {
+        $_ eq '*'
+            or
+        $_ eq $tag
+    } @{$groupby{$attr} // []};
 }
 
 no Any::Moose;

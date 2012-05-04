@@ -125,7 +125,7 @@ while (my ($key, $list) = each %elem) {
         if (@unmangle) {
             for my $path (@{$el->path}) {
                 for my $attr (keys %{$path->attributes}) {
-                    next if $attr !~ /^(?:class|id)$/;
+                    next unless HTML::Linear::Path::_isgroup($el->path->[-1], $attr);
                     for my $unmangle (@unmangle) {
                         $path->attributes->{$attr} =~ s/$unmangle//;
                     }
@@ -141,7 +141,6 @@ while (my ($key, $list) = each %elem) {
 
 for my $xpath (keys %xpath) {
     next if 1 == scalar keys %{$xpath{$xpath}};
-    next if $xpath =~ m{/\@(?:class|id)$};
 
     my %file;
     push @{$file{$xpath{$xpath}->{$_}}}, $_

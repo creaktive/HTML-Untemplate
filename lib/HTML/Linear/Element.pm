@@ -53,6 +53,10 @@ Store representations of paths inside C<HTML::TreeBuilder> structure (L<HTML::Li
 
 Lazy L<Digest::SHA> (256-bit) representation.
 
+=attr strict
+
+Strict mode disables grouping by tags/attributes listed in L<HTML::Linear::Path/%HTML::Linear::Path::groupby>.
+
 =cut
 
 has attributes  => (is => 'rw', isa => 'HashRef[Str]', default => sub { {} }, auto_deref => 1);
@@ -63,6 +67,7 @@ has index_map   => (is => 'rw', isa => 'HashRef[Str]', default => sub { {} }, au
 has key         => (is => 'rw', isa => 'Str', default => '');
 has path        => (is => 'ro', isa => 'ArrayRef[HTML::Linear::Path]', required => 1, auto_deref => 1);
 has sha         => (is => 'ro', isa => 'Digest::SHA', default => sub { new Digest::SHA(256) }, lazy => 1 );
+has strict      => (is => 'ro', isa => 'Bool', default => 0);
 
 use overload '""' => \&as_string, fallback => 1;
 
@@ -124,7 +129,13 @@ sub as_hash {
             . HTML::Linear::Path::_wrap(sigil       => '@')
             . HTML::Linear::Path::_wrap(attribute   => $key)
         } = $self->attributes->{$key}
-            unless $self->attributes->{$key} =~ m{^\s*$}s;
+            if
+                $self->attributes->{$key} !~ m{^\s*$}s
+                and not (
+                    $self->strict
+                        ? 0
+                        : HTML::Linear::Path::_isgroup($self->path->[-1]->tag, $key)
+                );
     }
 
     $hash->{
