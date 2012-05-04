@@ -101,15 +101,19 @@ sub as_string {
 
 Build a nice XPath representation of a path inside the L<HTML::TreeBuilder> structure.
 
+Returns string in scalar context or XPath segments in list context.
+
 =cut
 
 sub as_xpath {
     my ($self) = @_;
-    return
-        join '',
-            map {
-                $_->as_xpath . ($self->index_map->{$_->address} // '')
-            } $self->path;
+    my @xpath = map {
+        $_->as_xpath
+        . ($self->index_map->{$_->address} // '')
+    } $self->path;
+    return wantarray
+        ? @xpath
+        : join '', @xpath;
 }
 
 =method as_hash
