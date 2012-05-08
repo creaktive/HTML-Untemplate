@@ -58,6 +58,7 @@ Tag name.
 
 has address     => (is => 'rw', isa => 'Str', required => 1);
 has attributes  => (is => 'ro', isa => 'HashRef[Str]', required => 1, auto_deref => 1);
+has is_groupable=> (is => 'rw', isa => 'Bool', default => 0);
 has key         => (is => 'rw', isa => 'Str', default => '');
 has strict      => (is => 'ro', isa => 'Bool', default => 0);
 has tag         => (is => 'ro', isa => 'Str', required => 1);
@@ -168,26 +169,31 @@ Build a nice XPath representation of a path inside the L<HTML::TreeBuilder> stru
 =cut
 
 sub as_xpath {
-    my ($self) = @_;
+    my ($self, $strict) = @_;
 
     my $xpath = _wrap(separator => '/') . _wrap(tag => $self->tag);
 
-    unless ($self->strict) {
-        for my $attr (keys %groupby) {
-            if (_isgroup($self->tag, $attr) and $self->attributes->{$attr}) {
-                $xpath .= _wrap(array       => '[');
-                $xpath .= _wrap(sigil       => '@');
-                $xpath .= _wrap(attribute   => $attr);
-                $xpath .= _wrap(equal       => '=');
-                $xpath .= _wrap(value       => _quote($self->attributes->{$attr}));
-                $xpath .= _wrap(array       => ']');
+    my $expr = '';
+    for my $attr (keys %groupby) {
+        if (_isgroup($self->tag, $attr) and $self->attributes->{$attr}) {
+            $expr .= _wrap(array        => '[');
+            $expr .= _wrap(sigil        => '@');
+            $expr .= _wrap(attribute    => $attr);
+            $expr .= _wrap(equal        => '=');
+            $expr .= _wrap(value        => _quote($self->attributes->{$attr}));
+            $expr .= _wrap(array        => ']');
 
-                last;
-            }
+            $self->is_groupable(1);
+
+            last;
         }
     }
 
-    return $xpath;
+    return $xpath . (
+        (not $self->strict and not $strict)
+            ? $expr
+            : ''
+    );
 }
 
 =method weight

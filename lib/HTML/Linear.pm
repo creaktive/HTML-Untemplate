@@ -29,10 +29,6 @@ use HTML::Linear::Path;
 
 Internal list representation.
 
-=method add_element
-
-Add an element to the list.
-
 =method as_list
 
 Access list as array.
@@ -53,7 +49,7 @@ has _list       => (
     isa         => 'ArrayRef[Any]',
     default     => sub { [] },
     handles     => {
-        add_element     => 'push',
+        _add_element    => 'push',
         as_list         => 'elements',
         count_elements  => 'count',
         get_element     => 'accessor',
@@ -93,6 +89,14 @@ Used for internal collision detection.
 
 has _uniq       => (is => 'ro', isa => 'HashRef[Str]', default => sub { {} });
 
+=attr _path_count
+
+Used internally for computing numeric tag indexes (like in C</p[3]>).
+
+=cut
+
+has _path_count => (is => 'ro', isa => 'HashRef[Str]', default => sub { {} });
+
 =method eof
 
 Overrides L<HTML::TreeBuilder> C<eof>.
@@ -104,13 +108,29 @@ after eof => sub {
 
     $self->deparse($self, []);
 
-    my $i = 0;
-    my %uniq;
+    my %short;
     for my $elem ($self->as_list) {
-        $elem->index($uniq{join ',', $elem->path}++);
-        $elem->index_map($self->_uniq);
+        my @rpath = reverse $elem->as_xpath;
+        for my $i (0 .. $#rpath) {
+            ++$short{join '' => @rpath[0 .. $i]};
+        }
     }
 };
+
+=method add_element
+
+Add an element to the list.
+
+=cut
+
+sub add_element {
+    my ($self, $elem) = @_;
+
+    $elem->index($self->_path_count->{join ',', $elem->path}++);
+    $elem->index_map($self->_uniq);
+
+    $self->_add_element($elem);
+}
 
 =method deparse($node, $path)
 
@@ -149,7 +169,7 @@ sub deparse {
     for my $child ($node->content_list) {
         if (ref $child) {
             my $l = $self->deparse($child, [ @{$path}, $level ]);
-            push @{$uniq{$l->as_xpath}}, $l->address;
+            push @{$uniq{$l->as_xpath(1)}}, $l->address;
         } else {
             $self->add_element(
                 HTML::Linear::Element->new({
