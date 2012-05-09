@@ -3,6 +3,8 @@ package HTML::Linear;
 use strict;
 use common::sense;
 
+use Digest::SHA qw(sha256);
+
 use Any::Moose;
 use Any::Moose qw(X::NonMoose);
 extends 'HTML::TreeBuilder';
@@ -53,6 +55,31 @@ has _list       => (
         as_list         => 'elements',
         count_elements  => 'count',
         get_element     => 'accessor',
+    },
+);
+
+=attr _shrink
+
+Internal shrink mode flag.
+
+=method set_shrink
+
+Enable XPath shrinking.
+
+=method unset_shrink
+
+Disable XPath shrinking.
+
+=cut
+
+has _shrink => (
+    traits      => ['Bool'],
+    is          => 'ro',
+    isa         => 'Bool',
+    default     => 0,
+    handles     => {
+        set_shrink      => 'set',
+        unset_shrink    => 'unset',
     },
 );
 
@@ -108,11 +135,24 @@ after eof => sub {
 
     $self->deparse($self, []);
 
-    my %short;
-    for my $elem ($self->as_list) {
-        my @rpath = reverse $elem->as_xpath;
-        for my $i (0 .. $#rpath) {
-            ++$short{join '' => @rpath[0 .. $i]};
+    if ($self->_shrink) {
+        my %short;
+        for my $elem ($self->as_list) {
+            my @rpath = reverse $elem->as_xpath;
+            for my $i (0 .. $#rpath) {
+                my $key = sha256(join '' => @rpath[0 .. $i]);
+                $short{$key}{offset} = $#rpath - $i;
+                push @{$short{$key}{elem}}, $elem;
+                ++$short{$key}{accumulator}{$elem->as_xpath};
+            }
+        }
+
+        for my $key (sort { $short{$b}{offset} <=> $short{$a}{offset} } keys %short) {
+            next if 1 < keys %{$short{$key}{accumulator}};
+            for my $elem (@{$short{$key}{elem}}) {
+                next if $elem->trim_at;
+                $elem->trim_at($short{$key}{offset});
+            }
         }
     }
 };

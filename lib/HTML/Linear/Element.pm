@@ -57,6 +57,10 @@ Lazy L<Digest::SHA> (256-bit) representation.
 
 Strict mode disables grouping by tags/attributes listed in L<HTML::Linear::Path/%HTML::Linear::Path::groupby>.
 
+=attr trim_at
+
+XPath seems to be unique after that level.
+
 =cut
 
 has attributes  => (is => 'rw', isa => 'HashRef[Str]', default => sub { {} }, auto_deref => 1);
@@ -68,6 +72,7 @@ has key         => (is => 'rw', isa => 'Str', default => '');
 has path        => (is => 'ro', isa => 'ArrayRef[HTML::Linear::Path]', required => 1, auto_deref => 1);
 has sha         => (is => 'ro', isa => 'Digest::SHA', default => sub { new Digest::SHA(256) }, lazy => 1 );
 has strict      => (is => 'ro', isa => 'Bool', default => 0);
+has trim_at     => (is => 'rw', isa => 'Int', default => 0);
 
 use overload '""' => \&as_string, fallback => 1;
 
@@ -113,7 +118,8 @@ sub as_xpath {
                 ? ''
                 : $self->index_map->{$_->address} // ''
             )
-    } $self->path;
+    } ($self->path) [$self->trim_at .. $#{$self->path}];
+    $self->trim_at and unshift @xpath, HTML::Linear::Path::_wrap(separator => '/');
     return wantarray
         ? @xpath
         : join '', @xpath;
