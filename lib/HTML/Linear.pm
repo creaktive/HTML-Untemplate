@@ -139,9 +139,15 @@ after eof => sub {
         my %short;
         for my $elem ($self->as_list) {
             my @rpath = reverse $elem->as_xpath;
-            for my $i (0 .. $#rpath) {
-                my $key = sha256(join '' => @rpath[0 .. $i]);
-                $short{$key}{offset} = $#rpath - $i;
+            my $i = 0;
+            unless ($self->_strict) {
+                for (; $i <= $#rpath; $i++) {
+                    last if $elem->path->[-1 - $i]->is_groupable;
+                }
+            }
+            for my $j ($i .. $#rpath) {
+                my $key = sha256(join '' => @rpath[0 .. $j]);
+                $short{$key}{offset} = $#rpath - $j;
                 push @{$short{$key}{elem}}, $elem;
                 ++$short{$key}{accumulator}{$elem->as_xpath};
             }
