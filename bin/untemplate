@@ -41,6 +41,17 @@ This.
 Enable syntax highlight for XPath.
 By default, enabled automatically on interactive terminals.
 
+=item --[no]shrink
+
+Shrink the XPath to the minimal unique identifier.
+For example:
+
+    /html/body[@id='cpansearch']/form[@class='searchbox']/input[@name='query']
+
+Could be shortened as:
+
+    //input[@name='query']
+
 =item --[no]strict
 
 Strict mode disables grouping by C<id>, C<class> or C<name> attributes.
@@ -78,6 +89,7 @@ See the C<--unmangle> option for a work-around.
 GetOptions(
     q(help)         => \my $help,
     q(color!)       => \my $color,
+    q(shrink!)      => \my $shrink,
     q(strict!)      => \my $strict,
     q(unmangle=s)   => \my @unmangle,
 ) or pod2usage(q(-verbose) => 1);
@@ -106,6 +118,9 @@ fetch_documents() unless $@;
 tie my %elem, 'Tie::IxHash';
 for my $file (@ARGV) {
     my $hl = HTML::Linear->new;
+
+    $hl->set_shrink
+        if $shrink // 0;
 
     $hl->set_strict
         if $strict // 0;
