@@ -229,7 +229,7 @@ sub deparse {
     }
 
     while (my ($xpath, $address) = each %uniq) {
-        next if 2 > scalar @{$address};
+        next if not $self->_strict and 2 > scalar @{$address};
 
         my $i = 0;
         $self->_uniq->{$_} =
