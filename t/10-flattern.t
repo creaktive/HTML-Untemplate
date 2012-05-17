@@ -43,16 +43,16 @@ for my $el ($hl->as_list) {
 }
 
 my $expect = {
-    '/html/body[1]/h1[1]/text()' => [ 10, 'test 2' ],
-    '/html/body[1]/p[1]/text()' => [ 0, ' Lorem ipsum dolor sit amet, consectetur adipiscing elit.  Ut sed scelerisque nulla.  Nam sit amet massa ac justo lacinia cursus. Et harum quidem rerum facilis est et expedita distinctio. ' ],
-    '/html/body[1]/p[1]/ul[1]/li[1]/@id' => [ 0, 'li1' ],
-    '/html/body[1]/p[1]/ul[1]/li[1]/text()' => [ 0, 'Vestibulum ullamcorper eleifend justo.' ],
-    '/html/body[1]/p[1]/ul[1]/li[2]/text()' => [ 0, 'Sed id sapien tortor.' ],
-    '/html/body[1]/p[1]/ul[1]/li[3]/text()' => [ 0, ' Fusce et volutpat mi. ' ],
-    '/html/body[1]/p[1]/ul[1]/li[4]/text()' => [ 0, 'Quisque ullamcorper mauris lacus.' ],
-    '/html/body[1]/p[1]/ul[1]/li[5]/text()' => [ 0, 'Nunc in erat sit amet nisi vulputate pharetra.' ],
-    '/html/body[1]/p[2]/text()' => [ 0, ' Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur? ' ],
-    '/html/head[1]/title[1]/text()' => [ 15, 'test 1' ],
+    '/html/body/h1/text()' => [ 10, 'test 2' ],
+    '/html/body/p[1]/text()' => [ 0, ' Lorem ipsum dolor sit amet, consectetur adipiscing elit.  Ut sed scelerisque nulla.  Nam sit amet massa ac justo lacinia cursus. Et harum quidem rerum facilis est et expedita distinctio. ' ],
+    '/html/body/p[1]/ul/li[1]/@id' => [ 0, 'li1' ],
+    '/html/body/p[1]/ul/li[1]/text()' => [ 0, 'Vestibulum ullamcorper eleifend justo.' ],
+    '/html/body/p[1]/ul/li[2]/text()' => [ 0, 'Sed id sapien tortor.' ],
+    '/html/body/p[1]/ul/li[3]/text()' => [ 0, ' Fusce et volutpat mi. ' ],
+    '/html/body/p[1]/ul/li[4]/text()' => [ 0, 'Quisque ullamcorper mauris lacus.' ],
+    '/html/body/p[1]/ul/li[5]/text()' => [ 0, 'Nunc in erat sit amet nisi vulputate pharetra.' ],
+    '/html/body/p[2]/text()' => [ 0, ' Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur? ' ],
+    '/html/head/title/text()' => [ 15, 'test 1' ],
 };
 
 ok(

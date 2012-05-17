@@ -229,14 +229,14 @@ sub deparse {
     }
 
     while (my ($xpath, $address) = each %uniq) {
-        next if not $self->_strict and 2 > scalar @{$address};
-
-        my $i = 0;
-        $self->_uniq->{$_} =
-            HTML::Linear::Path::_wrap(array     => '[')
-            . HTML::Linear::Path::_wrap(number  => ++$i)
-            . HTML::Linear::Path::_wrap(array   => ']')
-                for @{$address};
+        if (($self->_strict and $self->_shrink) or 1 < scalar @{$address}) {
+            my $i = 0;
+            $self->_uniq->{$_} =
+                HTML::Linear::Path::_wrap(array     => '[')
+                . HTML::Linear::Path::_wrap(number  => ++$i)
+                . HTML::Linear::Path::_wrap(array   => ']')
+                    for @{$address};
+        }
     }
 
     return $level;
