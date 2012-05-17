@@ -17,6 +17,8 @@ my $iterator = Set::CrossProduct->new([
 
 for my $tuple ($iterator->combinations) {
     my $file = q...file($Bin, shift @{$tuple});
+
+    next if $tuple->[0] eq q(unset_strict);
     diag($file);
 
     my $xpath = HTML::TreeBuilder::XPath->new;
@@ -30,7 +32,6 @@ for my $tuple ($iterator->combinations) {
         diag($opt . q(()));
         $hl->$opt();
     }
-    next if $tuple->[0] eq q(unset_strict);
 
     ok($hl->parse_file($file), q(HTML::Linear::parse_file));
     ++$n;

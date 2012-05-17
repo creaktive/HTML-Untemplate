@@ -117,7 +117,7 @@ sub as_xpath {
             (not $self->strict and $_->is_groupable)
                 ? ''
                 : $self->index_map->{$_->address} // ''
-            )
+        )
     } ($self->path) [$self->trim_at .. $#{$self->path}];
     $self->trim_at and unshift @xpath, HTML::Linear::Path::_wrap(separator => '/');
     return wantarray
