@@ -211,11 +211,13 @@ sub deparse {
         );
     }
 
-    my %uniq;
+    my (%uniq, %uniq_strict, %is_groupable);
     for my $child ($node->content_list) {
         if (ref $child) {
             my $l = $self->deparse($child, [ @{$path}, $level ]);
-            push @{$uniq{$l->as_xpath(1)}}, $l->address;
+            push @{$uniq{$l->as_xpath}}, $l->address;
+            push @{$uniq_strict{$l->as_xpath(1)}}, $l->address;
+            $is_groupable{$l->address} = $l->is_groupable;
         } else {
             $self->add_element(
                 HTML::Linear::Element->new({
@@ -228,14 +230,32 @@ sub deparse {
         }
     }
 
+    my %count;
+    while (my ($xpath, $address) = each %uniq_strict) {
+        my $i = 1;
+        for my $addr (@{$address}) {
+            $count{$addr} = $i;
+        } continue {
+            ++$i;
+        }
+    }
+
     while (my ($xpath, $address) = each %uniq) {
-        if (($self->_strict and $self->_shrink) or 1 < scalar @{$address}) {
-            my $i = 0;
-            $self->_uniq->{$_} =
-                HTML::Linear::Path::_wrap(array     => '[')
-                . HTML::Linear::Path::_wrap(number  => ++$i)
-                . HTML::Linear::Path::_wrap(array   => ']')
-                    for @{$address};
+        if (
+            grep { $count{$_} > 1 } @{$address}
+            #or ($self->_strict and $self->_shrink)  # less verbose; unstable
+            or $self->_shrink                       # verbose; stable
+            or 1 < scalar @{$address}
+        ) {
+            my $i = 1;
+            for my $addr (@{$address}) {
+                    $self->_uniq->{$addr} =
+                    HTML::Linear::Path::_wrap(array     => '[')
+                    . HTML::Linear::Path::_wrap(number  => $is_groupable{$addr} ? $i : $count{$addr})
+                    . HTML::Linear::Path::_wrap(array   => ']');
+            } continue {
+                ++$i;
+            }
         }
     }
 

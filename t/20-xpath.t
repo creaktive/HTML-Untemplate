@@ -10,7 +10,7 @@ use_ok(q(HTML::Linear));
 my $n = 1;
 
 my $iterator = Set::CrossProduct->new([
-    [qw[test.html cpan.html]],
+    [qw[test.html cpan.html perl.html]],
     [qw[set_strict unset_strict]],
     [qw[set_shrink unset_shrink]],
 ]);
@@ -18,7 +18,7 @@ my $iterator = Set::CrossProduct->new([
 for my $tuple ($iterator->combinations) {
     my $file = q...file($Bin, shift @{$tuple});
 
-    next if $tuple->[0] eq q(unset_strict);
+    #next if $tuple->[0] eq q(unset_strict);
     diag($file);
 
     my $xpath = HTML::TreeBuilder::XPath->new;
@@ -51,9 +51,11 @@ for my $tuple ($iterator->combinations) {
     for my $expr (keys %hash) {
         my $content = $hash{$expr};
         $content =~ s/^\s+|\s+$//gsx;
+        $content =~ s/\s+/ /gsx;
 
         my $value = $xpath->findvalue($expr);
         $value =~ s/^\s+|\s+$//gsx;
+        $value =~ s/\s+/ /gsx;
 
         ok(
             $value eq $content,

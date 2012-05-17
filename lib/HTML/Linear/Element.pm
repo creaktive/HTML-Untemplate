@@ -113,11 +113,7 @@ Returns string in scalar context or XPath segments in list context.
 sub as_xpath {
     my ($self) = @_;
     my @xpath = map {
-        $_->as_xpath . (
-            (not $self->strict and $_->is_groupable)
-                ? ''
-                : $self->index_map->{$_->address} // ''
-        )
+        $_->as_xpath . ($self->index_map->{$_->address} // '')
     } ($self->path) [$self->trim_at .. $#{$self->path}];
     $self->trim_at and unshift @xpath, HTML::Linear::Path::_wrap(separator => '/');
     return wantarray
