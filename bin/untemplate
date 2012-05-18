@@ -4,6 +4,9 @@
 use strict;
 use common::sense;
 use feature 'say';
+
+# workaround for the crappy Windows 'Cannot figure out an encoding to use' error
+$ENV{LANG} = 'en_US.UTF-8' if $^O =~ /^win/i;
 use open ':locale';
 
 use File::Basename;
@@ -36,6 +39,11 @@ Accepts URL if L<AnyEvent::Net::Curl::Queued> is present.
 
 This.
 
+=item --encoding=name
+
+Specify the HTML document encoding (C<latin1>, C<utf8>).
+System locale is assumed by default.
+
 =item --[no]color
 
 Enable syntax highlight for XPath.
@@ -51,6 +59,8 @@ For example:
 Could be shortened as:
 
     //input[@name='query']
+
+The shrinking is enabled by default.
 
 =item --[no]strict
 
@@ -89,6 +99,7 @@ See the C<--unmangle> option for a work-around.
 GetOptions(
     q(help)         => \my $help,
     q(color!)       => \my $color,
+    q(encoding=s)   => \my $encoding,
     q(shrink!)      => \my $shrink,
     q(strict!)      => \my $strict,
     q(unmangle=s)   => \my @unmangle,
@@ -120,13 +131,16 @@ for my $file (@ARGV) {
     my $hl = HTML::Linear->new;
 
     $hl->set_shrink
-        if $shrink // 0;
+        if $shrink // 1;
 
     $hl->set_strict
         if $strict // 0;
 
-    $hl->parse_file('' . $file)
+    open(my $fh, '<:' . ($encoding ? "encoding($encoding)" : 'locale' ), $file)
+        or die "Can't open $file: $!";
+    $hl->parse_file($fh)
         or die "Can't parse $file: $!";
+    close $fh;
 
     push @{$elem{$_}}, [ $_ => basename($file) ]
         for $hl->as_list;
