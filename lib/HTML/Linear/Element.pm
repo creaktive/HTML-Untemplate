@@ -1,7 +1,8 @@
 package HTML::Linear::Element;
 # ABSTRACT: represent elements to populate HTML::Linear
 use strict;
-use common::sense;
+use utf8;
+use warnings qw(all);
 
 use Digest::SHA;
 use List::Util qw(sum);

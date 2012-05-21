@@ -1,7 +1,8 @@
 package HTML::Linear::Path;
 # ABSTRACT: represent paths inside HTML::Tree
 use strict;
-use common::sense;
+use utf8;
+use warnings qw(all);
 
 use JSON::XS;
 use Any::Moose;

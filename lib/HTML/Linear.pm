@@ -1,7 +1,8 @@
 package HTML::Linear;
 # ABSTRACT: represent HTML::Tree as a flat list
 use strict;
-use common::sense;
+use utf8;
+use warnings qw(all);
 
 use Digest::SHA qw(sha256);
 

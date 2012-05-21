@@ -1,4 +1,6 @@
-use common::sense;
+use strict;
+use utf8;
+use warnings qw(all);
 
 use Data::Dumper;
 use FindBin qw($Bin);

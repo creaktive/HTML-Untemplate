@@ -1,4 +1,6 @@
-use common::sense;
+use strict;
+use utf8;
+use warnings qw(all);
 
 use Set::CrossProduct;
 use FindBin qw($Bin);
