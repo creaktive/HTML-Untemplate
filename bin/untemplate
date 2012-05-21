@@ -2,11 +2,10 @@
 # ABSTRACT: analyze several HTML documents based on the same template
 # PODNAME: untemplate
 use strict;
-use common::sense;
-use feature 'say';
+use utf8;
+use warnings qw(all);
 
-# workaround for the crappy Windows 'Cannot figure out an encoding to use' error
-$ENV{LANG} = 'en_US.UTF-8' if $^O =~ /^win/i;
+use feature 'say';
 use open ':locale';
 
 use File::Basename;
@@ -48,6 +47,11 @@ System locale is assumed by default.
 
 Enable syntax highlight for XPath.
 By default, enabled automatically on interactive terminals.
+
+=item --[no]partial
+
+Enable the display of "partial" templates, that is, nodes present in B<some> documents.
+By default, only the nodes present in B<all> documents are displayed.
 
 =item --[no]shrink
 
@@ -100,6 +104,7 @@ GetOptions(
     q(help)         => \my $help,
     q(color!)       => \my $color,
     q(encoding=s)   => \my $encoding,
+    q(partial!)     => \my $partial,
     q(shrink!)      => \my $shrink,
     q(strict!)      => \my $strict,
     q(unmangle=s)   => \my @unmangle,
@@ -163,17 +168,29 @@ while (my ($key, $list) = each %elem) {
         }
 
         my $hash = $el->as_hash;
-        $xpath{$_}->{$hash->{$_}} = $file
+        ++$xpath{$_}->{$hash->{$_}}{$file}
             for keys %{$hash};
     }
 }
 
 for my $xpath (keys %xpath) {
-    next if 1 == scalar keys %{$xpath{$xpath}};
-
     my %file;
-    push @{$file{$xpath{$xpath}->{$_}}}, $_
-        for keys %{$xpath{$xpath}};
+    my $m = 0;
+    my $n = 0;
+    for my $p (keys %{$xpath{$xpath}}) {
+        for my $q (keys %{$xpath{$xpath}->{$p}}) {
+            push @{$file{$q}}, $p;
+            ++$m;
+        }
+        ++$n;
+    }
+
+    next if
+        $n == $m / scalar @ARGV
+        or (
+            not ($partial // 0)
+            and scalar keys %file != scalar @ARGV
+        );
 
     if (1 < scalar keys %file) {
         say $xpath;
@@ -181,6 +198,7 @@ for my $xpath (keys %xpath) {
             for (@{$file{$file}}) {
                 if ($color) {
                     print GREEN . $file . RESET;
+                    s{(^\s+|\s+$)}{ON_RED . $1 . RESET}egsx;
                 } else {
                     print $file;
                 }
