@@ -6,7 +6,7 @@ use utf8;
 use warnings qw(all);
 
 use feature 'say';
-use open ':locale';
+use open qw(:std :utf8);
 
 use File::Basename;
 use File::Temp;
@@ -41,7 +41,7 @@ This.
 =item --encoding=name
 
 Specify the HTML document encoding (C<latin1>, C<utf8>).
-System locale is assumed by default.
+UTF-8 is assumed by default.
 
 =item --[no]color
 
@@ -141,7 +141,7 @@ for my $file (@ARGV) {
     $hl->set_strict
         if $strict // 0;
 
-    open(my $fh, '<:' . ($encoding ? "encoding($encoding)" : 'locale' ), $file)
+    open(my $fh, '<:' . ($encoding ? "encoding($encoding)" : 'utf8' ), $file)
         or die "Can't open $file: $!";
     $hl->parse_file($fh)
         or die "Can't parse $file: $!";

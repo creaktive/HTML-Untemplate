@@ -6,7 +6,7 @@ use utf8;
 use warnings qw(all);
 
 use feature 'say';
-use open ':locale';
+use open qw(:std :utf8);
 
 use Getopt::Long;
 use HTML::Linear;
@@ -41,7 +41,7 @@ This.
 =item --encoding=name
 
 Specify the HTML document encoding (C<latin1>, C<utf8>).
-System locale is assumed by default.
+UTF-8 is assumed by default.
 
 =item --[no]color
 
@@ -110,7 +110,7 @@ $hl->set_shrink
 $hl->set_strict
     if $strict // 0;
 
-open(my $fh, '<:' . ($encoding ? "encoding($encoding)" : 'locale' ), $ARGV[0])
+open(my $fh, '<:' . ($encoding ? "encoding($encoding)" : 'utf8' ), $ARGV[0])
     or die "Can't open $ARGV[0]: $!";
 $hl->parse_file($fh)
     or die "Can't parse $ARGV[0]: $!";
@@ -119,7 +119,8 @@ close $fh;
 for my $el ($hl->as_list) {
     my $hash = $el->as_hash;
     for (sort keys %{$hash}) {
-        $hash->{$_} =~ s/\s+/ /gs;
+        $hash->{$_} =~ s{(^\s+|\s+$)}{ON_RED . $1 . RESET}egsx
+            if $color;
         my @line = $_;
         push @line, $el->weight if $weight;
         push @line, $hash->{$_};
