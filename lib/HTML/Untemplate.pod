@@ -11,6 +11,8 @@ L<HTML::Untemplate> is a set of command-line tools
 and modules (L<HTML::Linear> and it's dependencies)
 which assist in original data retrieval.
 
+This process is also known as L<wrapper induction|https://en.wikipedia.org/wiki/Wrapper_(data_mining)>.
+
 To achieve this goal, HTML tree nodes are presented as XPath/content pairs.
 HTML documents linearized this way can be easily inspected manually or with a L<diff> tool.
 Please refer to L</EXAMPLES>.
@@ -41,11 +43,30 @@ Now, consider this: C<HTML =E<gt> scripting language =E<gt> RDBMS>
 
 I would call that "un-applying template", or "untemplate" C<:)>
 
-The practical application of this set of tools to assist in creation of web scrappers.
+The practical application of this set of tools is to assist in creation of web scrappers.
 
-=head2 EXAMPLES
+A similar (however completely unrelated) approach is described in the paper L<XPath-Wrapper Induction for Data Extraction|http://www.coltech.vnu.edu.vn/~thuyhq/papers/10_Khanh_Cuong_thuy_4288a150.pdf>.
 
-=head3 xpathify
+=head2 Human-readability
+
+Consider the following HTML node address representations:
+
+=for :list
+* C<0.1.3.0.0.4.0.0.0.2> (L<HTML::TreeBuilder> internal address representation);
+* C</html/body/div[4]/div/div[1]/table[2]/tr/td/ul/li[3]> (L<HTML::Linear>, strict);
+* C<//td[1]/ul[1]/li[3]> (L<HTML::Linear>, strict, shrink);
+* C</html/body[@class='section_home']/div[@id='content_holder'][1]/div[@id='content']/div[@id='main']/table[@class='content_table'][2]/tr/td/ul/li[@class='rss_content rss_content_col'][2]> (L<HTML::Linear>, non-strict);
+* C<//li[@class='rss_content rss_content_col'][2]> (L<HTML::Linear>, non-strict, shrink).
+
+They all point to the same node, however, their verbosity/readability vary.
+The I<strict> mode specifies tag names and positions only.
+Disabling I<strict> will use additional data from CSS selectors.
+I<Shrink> mode attempts to find the shortest XPath unique for every node
+(C</html/body> is shared among almost all nodes, thus is likely to be irrelevant).
+
+=head1 EXAMPLES
+
+=head2 xpathify
 
 The L<xpathify> tool flatterns the HTML tree into key/value list:
 
@@ -89,7 +110,7 @@ I<(HTML block)>
 The keys are in XPath format, while the values are respective content from the HTML tree.
 Theoretically, it could be possible to reassemble the HTML tree from the flat key/value list this tool generates.
 
-=head3 untemplate
+=head2 untemplate
 
 The L<untemplate> tool flatterns a set of HTML documents using the algorithm from L<xpathify>.
 Then, it strips the shared key/value pairs.
@@ -159,6 +180,8 @@ May be used to serialize/flattern HTML documents by your own:
 =head1 SEE ALSO
 
 =for :list
+* L<Wrapper (data mining)|https://en.wikipedia.org/wiki/Wrapper_(data_mining)>
+* L<XPath-Wrapper Induction for Data Extraction|http://www.coltech.vnu.edu.vn/~thuyhq/papers/10_Khanh_Cuong_thuy_4288a150.pdf>
 * L<HTML::TreeBuilder>
 * L<HTML::Similarity>
 * L<XML::DifferenceMarkup>
