@@ -12,7 +12,6 @@ use Getopt::Long;
 use HTML::Linear;
 use IO::Interactive qw(is_interactive);
 use Pod::Usage;
-use Term::ANSIColor qw(:constants);
 
 # VERSION
 
@@ -48,6 +47,10 @@ UTF-8 is assumed by default.
 Enable syntax highlight for XPath.
 By default, enabled automatically on interactive terminals.
 
+=item --[no]html
+
+Disables the C<--color> option and highlights using HTML/CSS.
+
 =item --[no]shrink
 
 Shrink the XPath to the minimal unique identifier.
@@ -77,6 +80,7 @@ Print XPath weight on a second column.
 GetOptions(
     q(help)         => \my $help,
     q(color!)       => \my $color,
+    q(html!)        => \my $html,
     q(encoding=s)   => \my $encoding,
     q(shrink!)      => \my $shrink,
     q(strict!)      => \my $strict,
@@ -88,18 +92,13 @@ pod2usage(q(-verbose) => 1)
 $color //= is_interactive(*STDOUT);
 $weight //= 0;
 
-if ($color) {
-    # ugly in the morning
-    %HTML::Linear::Path::xpath_wrap = (
-        array       => [BOLD . CYAN,            RESET],
-        attribute   => [BOLD . BRIGHT_YELLOW,   RESET],
-        equal       => [BOLD . YELLOW,          RESET],
-        number      => [BOLD . BRIGHT_GREEN,    RESET],
-        separator   => [BOLD . RED,             RESET],
-        sigil       => [BOLD . MAGENTA,         RESET],
-        tag         => [BOLD . BRIGHT_BLUE,     RESET],
-        value       => [BOLD . BRIGHT_WHITE,    RESET],
-    );
+if ($html) {
+    (%HTML::Linear::Path::xpath_wrap) = (%{$HTML::Linear::Path::Colors::scheme{html}});
+    $color = 0;
+    print $HTML::Linear::Path::Colors::html[0];
+} elsif ($color) {
+    (%HTML::Linear::Path::xpath_wrap) = (%{$HTML::Linear::Path::Colors::scheme{terminal}});
+    $html = 0;
 }
 
 my $hl = HTML::Linear->new;
@@ -119,11 +118,26 @@ close $fh;
 for my $el ($hl->as_list) {
     my $hash = $el->as_hash;
     for (sort keys %{$hash}) {
-        $hash->{$_} =~ s{(^\s+|\s+$)}{ON_RED . $1 . RESET}egsx
-            if $color;
-        my @line = $_;
+        my @line;
+        if ($html) {
+            push @line, HTML::Linear::Path::Colors::wrap_xpath($_);
+            $hash->{$_} = HTML::Linear::Path::Colors::wrap_content($hash->{$_}, 1);
+        } elsif ($color) {
+            push @line, $_;
+            $hash->{$_} = HTML::Linear::Path::Colors::wrap_content($hash->{$_});
+        } else {
+            push @line, $_;
+        }
+
         push @line, $el->weight if $weight;
         push @line, $hash->{$_};
-        say join("\t", @line);
+        if ($html) {
+            say '<tr><td>' . join('</td><td>', @line) . '</td></tr>';
+        } else {
+            say join("\t", @line);
+        }
     }
 }
+
+print $HTML::Linear::Path::Colors::html[1]
+    if $html;

@@ -7,6 +7,8 @@ use warnings qw(all);
 use JSON::XS;
 use Any::Moose;
 
+use HTML::Linear::Path::Colors;
+
 # VERSION
 
 =head1 SYNOPSIS
@@ -131,18 +133,11 @@ The format is:
         value       => ['' => ''],
     )
 
+There are several pre-defined schemes at L<HTML::Linear::Path::Colors>.
+
 =cut
 
-our %xpath_wrap = (
-    array       => ['' => ''],
-    attribute   => ['' => ''],
-    equal       => ['' => ''],
-    number      => ['' => ''],
-    separator   => ['' => ''],
-    sigil       => ['' => ''],
-    tag         => ['' => ''],
-    value       => ['' => ''],
-);
+our (%xpath_wrap) = (%{$HTML::Linear::Path::Colors::scheme{default}});
 
 =method as_string
 
