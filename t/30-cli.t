@@ -2,8 +2,32 @@ use strict;
 use utf8;
 use warnings qw(all);
 
+use Set::CrossProduct;
 use Test::More;
 use Test::Script::Run;
+
+for my $script (qw(untemplate xpathify)) {
+    subtest $script => sub {
+        my ($ret, $stdout, $stderr) = run_script($script => [qw[--help]]);
+        ok($ret == 1, qq($script --help));
+
+        ($ret, $stdout, $stderr) = run_script($script => []);
+        ok($ret == 1, qq($script (no args)));
+
+        ($ret, $stdout, $stderr) = run_script($script => [qw[--badoption]]);
+        ok($ret == 1, qq($script --badoption));
+
+        my $files = $script eq q(untemplate) ? 2 : 1;
+
+        ($ret, $stdout, $stderr) = run_script($script => [qw[baddir/badfile.html] x $files]);
+        ok($ret == 1, qq($script baddir/badfile.html));
+
+        ($ret, $stdout, $stderr) = run_script($script => [qw[t/00-load.t] x $files]);
+        ok($ret == 1, qq($script non-HTML));
+
+        done_testing(5);
+    };
+}
 
 run_output_matches(
     xpathify => [qw[t/test.html]],
@@ -25,13 +49,79 @@ run_output_matches(
 );
 
 run_output_matches(
-    untemplate => [qw[--html t/bash1839.html t/bash2486.html]],
+    xpathify => [qw[--color t/hello.html]],
+    [qq(\\[1m\\[31m\/\\[0m\\[1m\\[94mhtml\\[0m\\[1m\\[31m\/\\[0m\\[1m\\[94mbody\\[0m\\[1m\\[36m\[\\[0m\\[1m\\[92m1\\[0m\\[1m\\[36m\]\\[0m\\[1m\\[31m\/\\[0m\\[1m\\[93mtext\(\)\\[0m\t\\[41m\ \\[0mHello\ World\!)],
+    [],
+    q(xpathify ANSI colorified output matches),
+);
+
+run_output_matches(
+    untemplate => [qw[--html --unmangle=DUMMY t/bash1839.html t/bash2486.html]],
     [map { chomp; $_ } <DATA>],
     [],
     q(untemplate output matches),
 );
 
-done_testing(2);
+my $iterator = Set::CrossProduct->new([
+    [qw[--encoding=latin1 --encoding=utf8]],
+    [qw[--color --nocolor --html]],
+    [qw[--shrink --noshrink]],
+    [qw[--strict --nostrict]],
+    [qw[--weight --noweight]],
+]);
+
+my $m = 0;
+for my $tuple ($iterator->combinations) {
+    my $html = grep /html/, @{$tuple};
+    run_output_matches(
+        xpathify => [@{$tuple}, q(t/hello.html)],
+        $html
+            ? [
+                qr(<![^>]+>),
+                q(<html>),
+                q(<head>),
+                q(<title></title>),
+                qr(<meta.*?>),
+                qr(<link.*?>),
+                q(</head>),
+                q(<body>),
+                q(<table summary="">),
+                qr(Hello&nbsp;World!),
+                q(</table>),
+                q(</body>),
+                q(</html>),
+            ]
+            : [qr(Hello\s+World!)],
+        [],
+    );
+    ++$m;
+}
+
+$iterator = Set::CrossProduct->new([
+    [qw[--encoding=latin1 --encoding=utf8]],
+    [qw[--color --nocolor --html]],
+    [qw[--partial --nopartial]],
+    [qw[--shrink --noshrink]],
+    [qw[--strict --nostrict]],
+]);
+
+for my $tuple ($iterator->combinations) {
+    run_ok(
+        untemplate => [@{$tuple}, qw(t/bash1839.html t/bash2486.html)],
+        q(untemplate ) . join(' ', @{$tuple}),
+    );
+    ++$m;
+}
+
+if ($ENV{RELEASE_USE_YADA}) {
+    run_ok(
+        untemplate => [qw(http://bash.org/?1839 http://bash.org/?2486 http://255.255.255.255/)],
+        q(untemplate http://...),
+    );
+    ++$m;
+}
+
+done_testing(5 + $m);
 
 __DATA__
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">

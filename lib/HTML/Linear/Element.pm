@@ -140,12 +140,8 @@ sub as_hash {
             . HTML::Linear::Path::_wrap(attribute   => $key)
         } = $self->attributes->{$key}
             if
-                $self->attributes->{$key} !~ m{^\s*$}s
-                and not (
-                    $self->strict
-                        ? 0
-                        : HTML::Linear::Path::_isgroup($self->path->[-1]->tag, $key)
-                );
+                $self->strict
+                or not HTML::Linear::Path::_isgroup($self->path->[-1]->tag, $key);
     }
 
     $hash->{

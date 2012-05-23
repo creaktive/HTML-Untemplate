@@ -143,8 +143,7 @@ for my $file (@ARGV) {
 
     open(my $fh, '<:' . ($encoding ? "encoding($encoding)" : 'utf8' ), $file)
         or die "Can't open $file: $!";
-    $hl->parse_file($fh)
-        or die "Can't parse $file: $!";
+    $hl->parse_file($fh);
     close $fh;
 
     push @{$elem{$_}}, [ $_ => basename($file) ]
@@ -185,12 +184,14 @@ for my $xpath (keys %xpath) {
         ++$n;
     }
 
-    next if
-        $n == $m / scalar @ARGV
-        or (
+    my $flag = 0;
+    $flag = 1
+        if $n == $m / scalar @ARGV;
+    $flag = 1
+        if
             not ($partial // 0)
-            and scalar keys %file != scalar @ARGV
-        );
+            and scalar keys %file != scalar @ARGV;
+    next if $flag;
 
     if (1 < scalar keys %file) {
         if ($html) {

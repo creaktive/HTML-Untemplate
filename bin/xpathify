@@ -111,8 +111,7 @@ $hl->set_strict
 
 open(my $fh, '<:' . ($encoding ? "encoding($encoding)" : 'utf8' ), $ARGV[0])
     or die "Can't open $ARGV[0]: $!";
-$hl->parse_file($fh)
-    or die "Can't parse $ARGV[0]: $!";
+$hl->parse_file($fh);
 close $fh;
 
 for my $el ($hl->as_list) {

@@ -191,26 +191,26 @@ sub deparse {
     my $level = HTML::Linear::Path->new({
         address     => $node->address,
         attributes  => {
-            map     { lc $_ => $node->attr($_) }
-            grep    { not m{^[_/]} }
-            $node->all_attr_names
+            map {
+                m{^[_/]}x
+                    ? ()
+                    : (lc, $node->attr($_))
+            } $node->all_attr_names
         },
         strict      => $self->_strict,
         tag         => $node->tag,
     });
 
-    if (
-        not $node->content_list
-        or (ref(($node->content_list)[0]) ne '')
-    ) {
-        $self->add_element(
-            HTML::Linear::Element->new({
-                depth   => $node->depth,
-                path    => [ @{$path}, $level ],
-                strict  => $self->_strict,
-            })
-        );
-    }
+    my $flag = 0;
+    $flag = 1 if not $node->content_list;
+    $flag = 1 if $node->content_list and (ref(($node->content_list)[0]) ne '');
+    $self->add_element(
+        HTML::Linear::Element->new({
+            depth   => $node->depth,
+            path    => [ @{$path}, $level ],
+            strict  => $self->_strict,
+        })
+    ) if $flag;
 
     my (%uniq, %uniq_strict, %is_groupable);
     for my $child ($node->content_list) {
@@ -246,11 +246,10 @@ sub deparse {
             grep { $count{$_} > 1 } @{$address}
             #or ($self->_strict and $self->_shrink)  # less verbose; unstable
             or $self->_shrink                       # verbose; stable
-            or 1 < scalar @{$address}
         ) {
             my $i = 1;
             for my $addr (@{$address}) {
-                    $self->_uniq->{$addr} =
+                $self->_uniq->{$addr} =
                     HTML::Linear::Path::_wrap(array     => '[')
                     . HTML::Linear::Path::_wrap(number  => $is_groupable{$addr} ? $i : $count{$addr})
                     . HTML::Linear::Path::_wrap(array   => ']');
