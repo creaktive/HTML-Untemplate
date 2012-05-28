@@ -112,12 +112,23 @@ for my $tuple ($iterator->combinations) {
     ++$m;
 }
 
-if ($ENV{RELEASE_USE_YADA}) {
-    run_ok(
+if ($ENV{RELEASE_USE_DOWNLOADER}) {
+    run_script(
+        xpathify => [qw(http://bash.org/?1839)],
+        q(xpathify http://bash.org...),
+    );
+    run_script(
+        xpathify => [qw(--encoding=latin1 http://google.com.br)],
+        q(xpathify http://google.com.br...),
+    );
+    run_script(
+        xpathify => [qw(http://255.255.255.255)],
+        q(xpathify http://BAD_HOST),
+    );
+    run_script(
         untemplate => [qw(http://bash.org/?1839 http://bash.org/?2486 http://255.255.255.255/)],
         q(untemplate http://...),
     );
-    ++$m;
 }
 
 done_testing(5 + $m);
