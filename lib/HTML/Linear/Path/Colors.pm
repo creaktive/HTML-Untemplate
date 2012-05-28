@@ -77,6 +77,7 @@ our @html = (
 <title></title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <link rel="stylesheet" href="http://creaktive.github.com/HTML-Untemplate/highlight.css" type="text/css">
+<link rel="stylesheet" href="highlight.css" type="text/css">
 </head>
 <body>
 <table summary="">
