@@ -246,11 +246,13 @@ Checks if C<$tag>/C<$attribute> tuple matches L</%HTML::Linear::Path::groupby>.
 
 sub _isgroup {
     my ($tag, $attr) = @_;
-    return 1 and grep {
-        $_ eq '*'
-            or
-        $_ eq $tag
-    } @{$groupby{$attr} // []};
+    return (
+        1 and grep {
+            $_ eq '*'
+                or
+            $_ eq $tag
+        } @{$groupby{$attr} // []}
+    );
 }
 
 1;

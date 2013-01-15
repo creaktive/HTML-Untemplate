@@ -55,15 +55,12 @@ run_output_matches(
     q(xpathify ANSI colorified output matches),
 );
 
-SKIP: {
-    skip broken => 1;
-    run_output_matches(
-        untemplate => [qw[--encoding=latin1 --html --unmangle=DUMMY t/bash1839.html t/bash2486.html]],
-        [map { chomp; $_ } <DATA>],
-        [],
-        q(untemplate output matches),
-    );
-}
+run_output_matches(
+    untemplate => [qw[--encoding=latin1 --html --unmangle=DUMMY t/bash1839.html t/bash2486.html]],
+    [map { chomp; $_ } <DATA>],
+    [],
+    q(untemplate output matches),
+);
 
 my $iterator = Set::CrossProduct->new([
     [qw[--color --nocolor --html]],
