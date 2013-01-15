@@ -13,6 +13,8 @@ extends 'HTML::TreeBuilder';
 use HTML::Linear::Element;
 use HTML::Linear::Path;
 
+## no critic (ProtectPrivateSubs, RequireFinalReturn)
+
 # VERSION
 
 =head1 SYNOPSIS

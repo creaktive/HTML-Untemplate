@@ -6,12 +6,15 @@ use strict;
 use utf8::all;
 use warnings qw(all);
 
+use Carp qw(croak);
 use Encode;
 use Getopt::Long;
 use HTML::Linear;
 use HTTP::Tiny;
 use IO::Interactive qw(is_interactive);
 use Pod::Usage;
+
+## no critic (ProhibitPackageVars)
 
 # VERSION
 
@@ -116,43 +119,49 @@ $hl->set_strict
     if $strict // 0;
 
 my $encoding_layer = ':' . ($encoding ? "encoding($encoding)" : 'utf8');
-if ($ARGV[0] =~ m{^https?://}) {
+if ($ARGV[0] =~ m{^https?://}x) {
     my $res = HTTP::Tiny->new->get($ARGV[0]);
-    die "Can't download $ARGV[0]: " . $res->{reason} unless $res->{success};
+    croak "Can't download $ARGV[0]: " . $res->{reason} unless $res->{success};
     $hl->parse_content(decode($encoding || 'utf8', $res->{content}));
 } elsif ($ARGV[0] eq '-') {
     binmode(\*STDIN, $encoding_layer);
     $hl->parse_file(\*STDIN);
 } else {
     open(my $fh, '<' . $encoding_layer, $ARGV[0])
-        or die "Can't open $ARGV[0]: $!";
+        or croak "Can't open $ARGV[0]: $!";
     $hl->parse_file($fh);
     close $fh;
 }
 
-for my $el ($hl->as_list) {
-    my $hash = $el->as_hash;
-    for (sort keys %{$hash}) {
-        my @line;
-        if ($html) {
-            push @line, HTML::Linear::Path::Colors::wrap_xpath($_);
-            $hash->{$_} = HTML::Linear::Path::Colors::wrap_content($hash->{$_}, 1);
-        } elsif ($color) {
-            push @line, $_;
-            $hash->{$_} = HTML::Linear::Path::Colors::wrap_content($hash->{$_});
-        } else {
-            push @line, $_;
-        }
-
-        push @line, $el->weight if $weight;
-        push @line, $hash->{$_};
-        if ($html) {
-            say '<tr><td>' . join('</td><td>', @line) . '</td></tr>';
-        } else {
-            say join("\t", @line);
-        }
-    }
-}
+scan($hl);
 
 print $HTML::Linear::Path::Colors::html[1]
     if $html;
+
+sub scan {
+    my ($tree) = @_;
+    for my $el ($tree->as_list) {
+        my $hash = $el->as_hash;
+        for (sort keys %{$hash}) {
+            my @line;
+            if ($html) {
+                push @line, HTML::Linear::Path::Colors::wrap_xpath($_);
+                $hash->{$_} = HTML::Linear::Path::Colors::wrap_content($hash->{$_}, 1);
+            } elsif ($color) {
+                push @line, $_;
+                $hash->{$_} = HTML::Linear::Path::Colors::wrap_content($hash->{$_});
+            } else {
+                push @line, $_;
+            }
+
+            push @line, $el->weight if $weight;
+            push @line, $hash->{$_};
+            if ($html) {
+                say '<tr><td>' . join('</td><td>', @line) . '</td></tr>';
+            } else {
+                say join("\t", @line);
+            }
+        }
+    }
+    return;
+}

@@ -1,5 +1,13 @@
+package HTML::Untemplate;
 # ABSTRACT: web scraping assistant
 # PODNAME: HTML::Untemplate
+
+use strict;
+use utf8;
+use warnings qw(all);
+
+use Moo;
+extends 'HTML::Linear';
 
 # VERSION
 
@@ -188,3 +196,5 @@ May be used to serialize/flattern HTML documents by your own:
 * L<XML::XSH2>
 
 =cut
+
+1;

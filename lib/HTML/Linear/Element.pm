@@ -11,6 +11,8 @@ use MooX::Types::MooseLike::Base qw(:all);
 
 use HTML::Linear::Path;
 
+## no critic (ProtectPrivateSubs)
+
 # VERSION
 
 =head1 SYNOPSIS
@@ -85,6 +87,7 @@ BUILD
 sub BUILD {
     my ($self) = @_;
     $self->attributes({%{$self->path->[-1]->attributes}});
+    return;
 }
 
 =method as_string
@@ -149,7 +152,7 @@ sub as_hash {
         $xpath
         . HTML::Linear::Path::_wrap(attribute => 'text()')
     } = $self->content
-        unless $self->content =~ m{^\s*$}s;
+        unless $self->content =~ m{^\s*$}sx;
 
     return $hash;
 }
@@ -161,7 +164,8 @@ Return XPath weight.
 =cut
 
 sub weight {
-    sum map +$_->weight, @{$_[0]->path};
+    my ($self) = @_;
+    return sum map { $_->weight } @{$self->path};
 }
 
 1;

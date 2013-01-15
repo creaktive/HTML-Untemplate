@@ -6,15 +6,18 @@ use strict;
 use utf8::all;
 use warnings qw(all);
 
+use Carp qw(croak);
 use File::Basename;
 use File::Temp;
 use Getopt::Long;
 use HTML::Linear;
 use IO::Interactive qw(is_interactive);
-use Module::Load qw(load);
+use Class::Load qw(try_load_class);
 use Pod::Usage;
 use Term::ANSIColor qw(:constants);
 use Tie::IxHash;
+
+## no critic (ProhibitDeepNests, ProhibitPackageVars)
 
 # VERSION
 
@@ -126,8 +129,8 @@ if ($html) {
     $html = 0;
 }
 
-eval { load('YADA') };
-fetch_documents() unless $@;
+try_load_class('YADA')
+    and fetch_documents();
 
 tie my %elem, 'Tie::IxHash';
 for my $file (@ARGV) {
@@ -140,7 +143,7 @@ for my $file (@ARGV) {
         if $strict // 0;
 
     open(my $fh, '<:' . ($encoding ? "encoding($encoding)" : 'utf8' ), $file)
-        or die "Can't open $file: $!";
+        or croak "Can't open $file: $!";
     $hl->parse_file($fh);
     close $fh;
 
@@ -156,9 +159,10 @@ while (my ($key, $list) = each %elem) {
         if (@unmangle) {
             for my $path (@{$el->path}) {
                 for my $attr (keys %{$path->attributes}) {
+                    ## no critic (ProtectPrivateSubs)
                     next unless HTML::Linear::Path::_isgroup($el->path->[-1], $attr);
                     for my $unmangle (@unmangle) {
-                        $path->attributes->{$attr} =~ s/$unmangle//;
+                        $path->attributes->{$attr} =~ s/$unmangle//x;
                     }
                 }
             }
@@ -230,7 +234,7 @@ print $HTML::Linear::Path::Colors::html[1]
 sub fetch_documents {
     my (@local, @remote);
     for (@ARGV) {
-        if (m{^https?://}) {
+        if (m{^https?://}x) {
             push @remote, $_;
         } else {
             push @local, $_;
@@ -238,6 +242,7 @@ sub fetch_documents {
     }
     return unless @remote;
 
+    ## no critic (RequireLocalizedPunctuationVars)
     @ARGV = @local;
 
     my $q = YADA->new;
@@ -261,4 +266,5 @@ sub fetch_documents {
         });
     }
     $q->wait;
+    return;
 }

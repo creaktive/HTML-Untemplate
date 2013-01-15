@@ -10,6 +10,8 @@ use MooX::Types::MooseLike::Base qw(:all);
 
 use HTML::Linear::Path::Colors;
 
+## no critic (ProhibitPackageVars)
+
 # VERSION
 
 =head1 SYNOPSIS
@@ -200,7 +202,8 @@ Return tag weight.
 =cut
 
 sub weight {
-    $tag_weight{$_[0]->tag} // 0;
+    my ($self) = @_;
+    return $tag_weight{$self->tag} // 0;
 }
 
 =func _quote
@@ -210,13 +213,13 @@ Quote attribute values for XPath representation.
 =cut
 
 sub _quote {
-    local $_ = $_[0];
+    local ($_) = @_;
 
-    s/\\/\\\\/gs;
-    s/'/\\'/gs;
-    s/\s+/ /gs;
-    s/^\s//s;
-    s/\s$//s;
+    s/\\/\\\\/gsx;
+    s/'/\\'/gsx;
+    s/\s+/ /gsx;
+    s/^\s//sx;
+    s/\s$//sx;
 
     return "'$_'";
 }
@@ -228,10 +231,11 @@ Help to make a fancy XPath.
 =cut
 
 sub _wrap {
+    my ($p, $q) = @_;
     return
-        $xpath_wrap{$_[0]}->[0]
-        . $_[1]
-        . $xpath_wrap{$_[0]}->[1];
+        $xpath_wrap{$p}->[0]
+        . $q
+        . $xpath_wrap{$p}->[1];
 }
 
 =func _isgroup($tag, $attribute)
@@ -242,7 +246,7 @@ Checks if C<$tag>/C<$attribute> tuple matches L</%HTML::Linear::Path::groupby>.
 
 sub _isgroup {
     my ($tag, $attr) = @_;
-    1 and grep {
+    return 1 and grep {
         $_ eq '*'
             or
         $_ eq $tag

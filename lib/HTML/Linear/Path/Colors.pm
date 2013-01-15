@@ -7,6 +7,8 @@ use warnings qw(all);
 use HTML::Entities;
 use Term::ANSIColor qw(:constants);
 
+## no critic (ProhibitPackageVars)
+
 # VERSION
 
 =head1 SYNOPSIS
@@ -70,8 +72,8 @@ Default HTML header/footer.
 
 =cut
 
-our @html = (
-    q(<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+our @html = (<<'BOILERPLATE_HTML_HEADER',
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
 <html>
 <head>
 <title></title>
@@ -81,11 +83,12 @@ our @html = (
 </head>
 <body>
 <table summary="">
-), q(</table>
+BOILERPLATE_HTML_HEADER
+<<'BOILERPLATE_HTML_FOOTER');
+</table>
 </body>
 </html>
-),
-);
+BOILERPLATE_HTML_FOOTER
 
 =func wrap_xpath($xpath)
 
