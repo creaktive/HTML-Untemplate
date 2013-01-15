@@ -1,3 +1,4 @@
+#!perl
 use strict;
 use utf8;
 use warnings qw(all);
@@ -5,7 +6,7 @@ use warnings qw(all);
 use Test::More tests => 1;
 
 BEGIN {
-    use_ok(q(HTML::Linear));
+    use_ok(q(HTML::Untemplate));
 };
 
-diag(qq(Testing HTML::Linear v$HTML::Linear::VERSION, Perl $], $^X));
+diag(qq(HTML::Untemplate v$HTML::Untemplate::VERSION, Perl $], $^X));

@@ -218,6 +218,10 @@ L<XPath-Wrapper Induction for Data Extraction|http://www.coltech.vnu.edu.vn/~thu
 
 =item *
 
+L<Extracting Data from HTML Using TreeBuilder Node IDs|http://secondthought.org/notes/nodeIdProbabilities.html>
+
+=item *
+
 L<HTML::TreeBuilder>
 
 =item *

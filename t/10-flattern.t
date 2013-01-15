@@ -1,3 +1,4 @@
+#!perl
 use strict;
 use utf8;
 use warnings qw(all);
@@ -7,15 +8,18 @@ use FindBin qw($Bin);
 use Path::Class;
 use Test::More;
 
-use_ok(q(HTML::Linear));
+use_ok(q(HTML::Untemplate));
 
-my $hl = HTML::Linear->new;
-isa_ok($hl, q(HTML::Linear));
+my $hl = HTML::Untemplate->new;
+isa_ok($hl, q(HTML::Untemplate));
 can_ok($hl, qw(
     eof
     set_strict
     parse_file
+    _add_element
     as_list
+    count_elements
+    get_element
 ));
 
 ok(
@@ -31,7 +35,10 @@ ok(
 my $n = 0;
 my %hash;
 
-for my $el ($hl->as_list) {
+is($hl->count_elements, 16, q(count_elements match));
+
+for my $i (0 .. $hl->count_elements - 1) {
+    my $el = $hl->get_element($i);
     isa_ok($el, q(HTML::Linear::Element));
     can_ok($el, qw(as_hash weight));
 
@@ -76,4 +83,4 @@ ok(
 $Data::Dumper::Sortkeys = 1;
 $err and diag(Dumper \%hash);
 
-done_testing(6 + $n * 2 + 2 * keys %{$expect});
+done_testing(7 + $n * 2 + 2 * keys %{$expect});

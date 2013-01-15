@@ -1,4 +1,4 @@
-#severity = harsh
+severity = harsh
 
 [TestingAndDebugging::RequireUseWarnings]
 equivalent_modules = common::sense

@@ -1,3 +1,4 @@
+#!perl
 use strict;
 use utf8;
 use warnings qw(all);

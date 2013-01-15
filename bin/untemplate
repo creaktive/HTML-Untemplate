@@ -133,99 +133,13 @@ try_load_class('YADA')
     and fetch_documents();
 
 tie my %elem, 'Tie::IxHash';
-for my $file (@ARGV) {
-    my $hl = HTML::Linear->new;
-
-    $hl->set_shrink
-        if $shrink // 1;
-
-    $hl->set_strict
-        if $strict // 0;
-
-    open(my $fh, '<:' . ($encoding ? "encoding($encoding)" : 'utf8' ), $file)
-        or croak "Can't open $file: $!";
-    $hl->parse_file($fh);
-    close $fh;
-
-    push @{$elem{$_}}, [ $_ => basename($file) ]
-        for $hl->as_list;
-}
+parse_files(\%elem);
 
 tie my %xpath, 'Tie::IxHash';
-while (my ($key, $list) = each %elem) {
-    for (@{$list}) {
-        my ($el, $file) = @{$_};
-
-        if (@unmangle) {
-            for my $path (@{$el->path}) {
-                for my $attr (keys %{$path->attributes}) {
-                    ## no critic (ProtectPrivateSubs)
-                    next unless HTML::Linear::Path::_isgroup($el->path->[-1], $attr);
-                    for my $unmangle (@unmangle) {
-                        $path->attributes->{$attr} =~ s/$unmangle//x;
-                    }
-                }
-            }
-        }
-
-        my $hash = $el->as_hash;
-        ++$xpath{$_}->{$hash->{$_}}{$file}
-            for keys %{$hash};
-    }
-}
+build_xpath(\%elem, \%xpath);
 
 for my $xpath (keys %xpath) {
-    my %file;
-    my $m = 0;
-    my $n = 0;
-    for my $p (keys %{$xpath{$xpath}}) {
-        for my $q (keys %{$xpath{$xpath}->{$p}}) {
-            push @{$file{$q}}, $p;
-            ++$m;
-        }
-        ++$n;
-    }
-
-    my $flag = 0;
-    $flag = 1
-        if $n == $m / scalar @ARGV;
-    $flag = 1
-        if
-            not ($partial // 0)
-            and scalar keys %file != scalar @ARGV;
-    next if $flag;
-
-    if (1 < scalar keys %file) {
-        if ($html) {
-            say '<tr><td colspan="2">' . HTML::Linear::Path::Colors::wrap_xpath($xpath) . '</td></tr>';
-        } else {
-            say $xpath;
-        }
-
-        for my $file (sort keys %file) {
-            for (@{$file{$file}}) {
-                if ($html) {
-                    say '<tr><td><span class="doc">' . $file . '</span></td><td>'
-                        . HTML::Linear::Path::Colors::wrap_content($_, 1)
-                        . '</td></tr>';
-                } else {
-                    if ($color) {
-                        print GREEN . $file . RESET;
-                        $_ = HTML::Linear::Path::Colors::wrap_content($_);
-                    } else {
-                        print $file;
-                    }
-                    say "\t${_}";
-                }
-            }
-        }
-
-        if ($html) {
-            say '<tr><td colspan="2" class="spacer"></td></tr>';
-        } else {
-            say '';
-        }
-    }
+    dump_diffs($xpath, \%xpath);
 }
 
 print $HTML::Linear::Path::Colors::html[1]
@@ -266,5 +180,111 @@ sub fetch_documents {
         });
     }
     $q->wait;
+    return;
+}
+
+sub parse_files {
+    my ($elem) = @_;
+    for my $file (@ARGV) {
+        my $hl = HTML::Linear->new;
+
+        $hl->set_shrink
+            if $shrink // 1;
+
+        $hl->set_strict
+            if $strict // 0;
+
+        open(my $fh, '<:' . ($encoding ? "encoding($encoding)" : 'utf8' ), $file)
+            or croak "Can't open $file: $!";
+        $hl->parse_file($fh);
+        close $fh;
+
+        push @{$elem->{$_}}, [ $_ => basename($file) ]
+            for $hl->as_list;
+    }
+    return;
+}
+
+sub build_xpath {
+    my ($elem, $xpath) = @_;
+    while (my ($key, $list) = each %$elem) {
+        for (@{$list}) {
+            my ($el, $file) = @{$_};
+
+            if (@unmangle) {
+                for my $path (@{$el->path}) {
+                    for my $attr (keys %{$path->attributes}) {
+                        ## no critic (ProtectPrivateSubs)
+                        next unless HTML::Linear::Path::_isgroup($el->path->[-1], $attr);
+                        for my $unmangle (@unmangle) {
+                            $path->attributes->{$attr} =~ s/$unmangle//x;
+                        }
+                    }
+                }
+            }
+
+            my $hash = $el->as_hash;
+            ++$xpath->{$_}->{$hash->{$_}}{$file}
+                for keys %{$hash};
+        }
+    }
+    return;
+}
+
+sub dump_diffs {
+    my ($xpath, $xpath_ref) = @_;
+
+    my %file;
+    my $m = 0;
+    my $n = 0;
+    for my $p (keys %{$xpath_ref->{$xpath}}) {
+        for my $q (keys %{$xpath_ref->{$xpath}->{$p}}) {
+            push @{$file{$q}}, $p;
+            ++$m;
+        }
+        ++$n;
+    }
+
+    my $flag = 0;
+    $flag = 1
+        if $n == $m / scalar @ARGV;
+    $flag = 1
+        if
+            not ($partial // 0)
+            and scalar keys %file != scalar @ARGV;
+    return if $flag;
+
+    if (1 < scalar keys %file) {
+        if ($html) {
+            say '<tr><td colspan="2">' . HTML::Linear::Path::Colors::wrap_xpath($xpath) . '</td></tr>';
+        } else {
+            say $xpath;
+        }
+
+        for my $file (sort keys %file) {
+            for (@{$file{$file}}) {
+                if ($html) {
+                    say '<tr><td><span class="doc">' . $file . '</span></td><td>'
+                        . HTML::Linear::Path::Colors::wrap_content($_, 1)
+                        . '</td></tr>';
+                } else {
+                    if ($color) {
+                        print GREEN . $file . RESET;
+                        $_ = HTML::Linear::Path::Colors::wrap_content($_);
+                    } else {
+                        print $file;
+                    }
+                    say "\t${_}";
+                }
+            }
+        }
+
+        if ($html) {
+            say '<tr><td colspan="2" class="spacer"></td></tr>';
+        } else {
+            say '';
+        }
+    }
+
     return;
 }

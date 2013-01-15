@@ -190,6 +190,7 @@ May be used to serialize/flattern HTML documents by your own:
 =for :list
 * L<Wrapper (data mining)|https://en.wikipedia.org/wiki/Wrapper_(data_mining)>
 * L<XPath-Wrapper Induction for Data Extraction|http://www.coltech.vnu.edu.vn/~thuyhq/papers/10_Khanh_Cuong_thuy_4288a150.pdf>
+* L<Extracting Data from HTML Using TreeBuilder Node IDs|http://secondthought.org/notes/nodeIdProbabilities.html>
 * L<HTML::TreeBuilder>
 * L<HTML::Similarity>
 * L<XML::DifferenceMarkup>
