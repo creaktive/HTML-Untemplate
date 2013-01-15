@@ -1,12 +1,10 @@
 #!/usr/bin/env perl
 # ABSTRACT: output HTML document as a flat XPath/content list
 # PODNAME: xpathify
+use 5.010;
 use strict;
-use utf8;
+use utf8::all;
 use warnings qw(all);
-
-use feature 'say';
-use open qw(:std :utf8);
 
 use Encode;
 use Getopt::Long;

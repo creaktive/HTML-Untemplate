@@ -5,7 +5,8 @@ use utf8;
 use warnings qw(all);
 
 use JSON::XS;
-use Any::Moose;
+use Moo;
+use MooX::Types::MooseLike::Base qw(:all);
 
 use HTML::Linear::Path::Colors;
 
@@ -32,7 +33,7 @@ Lazy L<JSON::XS> instance.
 
 has json        => (
     is          => 'ro',
-    isa         => 'JSON::XS',
+    isa         => InstanceOf['JSON::XS'],
     default     => sub { JSON::XS->new->ascii->canonical },
     lazy        => 1,
 );
@@ -59,12 +60,12 @@ Tag name.
 
 =cut
 
-has address     => (is => 'rw', isa => 'Str', required => 1);
-has attributes  => (is => 'ro', isa => 'HashRef[Str]', required => 1, auto_deref => 1);
-has is_groupable=> (is => 'rw', isa => 'Bool', default => 0);
-has key         => (is => 'rw', isa => 'Str', default => '');
-has strict      => (is => 'ro', isa => 'Bool', default => 0);
-has tag         => (is => 'ro', isa => 'Str', required => 1);
+has address     => (is => 'rw', isa => Str, required => 1);
+has attributes  => (is => 'ro', isa => HashRef[Str], required => 1);
+has is_groupable=> (is => 'rw', isa => Bool, default => sub { 0 });
+has key         => (is => 'rw', isa => Str, default => sub { '' });
+has strict      => (is => 'ro', isa => Bool, default => sub { 0 });
+has tag         => (is => 'ro', isa => Str, required => 1);
 
 use overload '""' => \&as_string, fallback => 1;
 
@@ -247,8 +248,5 @@ sub _isgroup {
         $_ eq $tag
     } @{$groupby{$attr} // []};
 }
-
-no Any::Moose;
-__PACKAGE__->meta->make_immutable;
 
 1;

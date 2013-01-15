@@ -6,8 +6,8 @@ use warnings qw(all);
 
 use Digest::SHA qw(sha256);
 
-use Any::Moose;
-use Any::Moose qw(X::NonMoose);
+use Moo;
+use MooX::Types::MooseLike::Base qw(:all);
 extends 'HTML::TreeBuilder';
 
 use HTML::Linear::Element;
@@ -47,17 +47,15 @@ Element accessor.
 =cut
 
 has _list       => (
-    traits      => ['Array'],
     is          => 'ro',
-    isa         => 'ArrayRef[Any]',
+    isa         => ArrayRef[InstanceOf('HTML::Linear::Element')],
     default     => sub { [] },
-    handles     => {
-        _add_element    => 'push',
-        as_list         => 'elements',
-        count_elements  => 'count',
-        get_element     => 'accessor',
-    },
 );
+
+sub _add_element { push @{shift->_list}, shift }
+sub as_list { @{shift->_list} }
+sub count_elements { 0 + @{shift->_list} }
+sub get_element { shift->_list->[shift] }
 
 =attr _shrink
 
@@ -74,15 +72,13 @@ Disable XPath shrinking.
 =cut
 
 has _shrink => (
-    traits      => ['Bool'],
-    is          => 'ro',
-    isa         => 'Bool',
-    default     => 0,
-    handles     => {
-        set_shrink      => 'set',
-        unset_shrink    => 'unset',
-    },
+    is          => 'rwp',
+    isa         => Bool,
+    default     => sub { 0 },
 );
+
+sub set_shrink { shift->_set__shrink(1) }
+sub unset_shrink { shift->_set__shrink(0) }
 
 =attr _strict
 
@@ -99,15 +95,13 @@ Group by C<id>, C<class> or C<name> attributes.
 =cut
 
 has _strict => (
-    traits      => ['Bool'],
-    is          => 'ro',
-    isa         => 'Bool',
-    default     => 0,
-    handles     => {
-        set_strict      => 'set',
-        unset_strict    => 'unset',
-    },
+    is          => 'rwp',
+    isa         => Bool,
+    default     => sub { 0 },
 );
+
+sub set_strict { shift->_set__strict(1) }
+sub unset_strict { shift->_set__strict(0) }
 
 =attr _uniq
 
@@ -115,7 +109,7 @@ Used for internal collision detection.
 
 =cut
 
-has _uniq       => (is => 'ro', isa => 'HashRef[Str]', default => sub { {} });
+has _uniq       => (is => 'ro', isa => HashRef[Str], default => sub { {} });
 
 =attr _path_count
 
@@ -123,7 +117,7 @@ Used internally for computing numeric tag indexes (like in C</p[3]>).
 
 =cut
 
-has _path_count => (is => 'ro', isa => 'HashRef[Str]', default => sub { {} });
+has _path_count => (is => 'ro', isa => HashRef[Str], default => sub { {} });
 
 =method eof
 
@@ -261,8 +255,5 @@ sub deparse {
 
     return $level;
 }
-
-no Any::Moose;
-__PACKAGE__->meta->make_immutable;
 
 1;

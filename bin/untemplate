@@ -1,12 +1,10 @@
 #!/usr/bin/env perl
 # ABSTRACT: analyze several HTML documents based on the same template
 # PODNAME: untemplate
+use 5.010;
 use strict;
-use utf8;
+use utf8::all;
 use warnings qw(all);
-
-use feature 'say';
-use open qw(:std :utf8);
 
 use File::Basename;
 use File::Temp;

@@ -6,7 +6,8 @@ use warnings qw(all);
 
 use Digest::SHA;
 use List::Util qw(sum);
-use Any::Moose;
+use Moo;
+use MooX::Types::MooseLike::Base qw(:all);
 
 use HTML::Linear::Path;
 
@@ -64,16 +65,16 @@ XPath seems to be unique after that level.
 
 =cut
 
-has attributes  => (is => 'rw', isa => 'HashRef[Str]', default => sub { {} }, auto_deref => 1);
-has content     => (is => 'rw', isa => 'Str', default => '');
-has depth       => (is => 'ro', isa => 'Int', required => 1);
-has index       => (is => 'rw', isa => 'Int', default => 0);
-has index_map   => (is => 'rw', isa => 'HashRef[Str]', default => sub { {} }, auto_deref => 1);
-has key         => (is => 'rw', isa => 'Str', default => '');
-has path        => (is => 'ro', isa => 'ArrayRef[HTML::Linear::Path]', required => 1, auto_deref => 1);
-has sha         => (is => 'ro', isa => 'Digest::SHA', default => sub { new Digest::SHA(256) }, lazy => 1 );
-has strict      => (is => 'ro', isa => 'Bool', default => 0);
-has trim_at     => (is => 'rw', isa => 'Int', default => 0);
+has attributes  => (is => 'rw', isa => HashRef[Str], default => sub { {} });
+has content     => (is => 'rw', isa => Str, default => sub { '' });
+has depth       => (is => 'ro', isa => Int, required => 1);
+has index       => (is => 'rw', isa => Int, default => sub { 0 });
+has index_map   => (is => 'rw', isa => HashRef[Str], default => sub { {} });
+has key         => (is => 'rw', isa => Str, default => sub { '' });
+has path        => (is => 'ro', isa => ArrayRef[InstanceOf('HTML::Linear::Path')], required => 1);
+has sha         => (is => 'ro', isa => InstanceOf('Digest::SHA'), default => sub { Digest::SHA->new(256) }, lazy => 1 );
+has strict      => (is => 'ro', isa => Bool, default => sub { 0 });
+has trim_at     => (is => 'rw', isa => Int, default => sub { 0 });
 
 use overload '""' => \&as_string, fallback => 1;
 
@@ -115,7 +116,7 @@ sub as_xpath {
     my ($self) = @_;
     my @xpath = map {
         $_->as_xpath . ($self->index_map->{$_->address} // '')
-    } ($self->path) [$self->trim_at .. $#{$self->path}];
+    } @{$self->path} [$self->trim_at .. $#{$self->path}];
     $self->trim_at and unshift @xpath, HTML::Linear::Path::_wrap(separator => '/');
     return wantarray
         ? @xpath
@@ -162,8 +163,5 @@ Return XPath weight.
 sub weight {
     sum map +$_->weight, @{$_[0]->path};
 }
-
-no Any::Moose;
-__PACKAGE__->meta->make_immutable;
 
 1;
