@@ -185,14 +185,19 @@ May be used to serialize/flattern HTML documents by your own:
 * L<HTML::Linear::Element> - represent elements to populate L<HTML::Linear>
 * L<HTML::Linear::Path> - represent paths inside L<HTML::Tree>
 
-=head1 SEE ALSO
+=head1 REFERENCES
 
 =for :list
 * L<Wrapper (data mining)|https://en.wikipedia.org/wiki/Wrapper_(data_mining)>
 * L<XPath-Wrapper Induction for Data Extraction|http://www.coltech.vnu.edu.vn/~thuyhq/papers/10_Khanh_Cuong_thuy_4288a150.pdf>
 * L<Extracting Data from HTML Using TreeBuilder Node IDs|http://secondthought.org/notes/nodeIdProbabilities.html>
-* L<HTML::TreeBuilder>
+* L<Web Scraping Made Simple with SiteScraper|http://sitescraper.googlecode.com/files/sitescraper.pdf>
+
+=head1 SEE ALSO
+
+=for :list
 * L<HTML::Similarity>
+* L<Template::Extract>
 * L<XML::DifferenceMarkup>
 * L<XML::XSH2>
 
