@@ -4,7 +4,7 @@ use strict;
 use utf8;
 use warnings qw(all);
 
-use JSON::XS;
+use JSON;
 use Moo;
 use MooX::Types::MooseLike::Base qw(:all);
 
@@ -29,14 +29,14 @@ use HTML::Linear::Path::Colors;
 
 =attr json
 
-Lazy L<JSON::XS> instance.
+Lazy L<JSON> instance.
 
 =cut
 
 has json        => (
     is          => 'ro',
-    isa         => InstanceOf['JSON::XS'],
-    default     => sub { JSON::XS->new->ascii->canonical },
+    isa         => InstanceOf['JSON'],
+    default     => sub { JSON->new->ascii->canonical },
     lazy        => 1,
 );
 
