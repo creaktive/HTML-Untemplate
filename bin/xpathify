@@ -50,6 +50,11 @@ UTF-8 is assumed by default.
 Enable syntax highlight for XPath.
 By default, enabled automatically on interactive terminals.
 
+=item --16
+
+Use 16 system colors.
+By default, try to use 256-color ANSI palette.
+
 =item --[no]html
 
 Disables the C<--color> option and highlights using HTML/CSS.
@@ -89,6 +94,7 @@ Print XPath weight on a second column.
 GetOptions(
     q(help)         => \my $help,
     q(color!)       => \my $color,
+    q(16)           => \my $sixteen,
     q(html!)        => \my $html,
     q(encoding=s)   => \my $encoding,
     q(shrink!)      => \my $shrink,
@@ -106,7 +112,7 @@ if ($html) {
     $color = 0;
     print $HTML::Linear::Path::Colors::html[0];
 } elsif ($color) {
-    (%HTML::Linear::Path::xpath_wrap) = (%{$HTML::Linear::Path::Colors::scheme{terminal}});
+    (%HTML::Linear::Path::xpath_wrap) = (%{$HTML::Linear::Path::Colors::scheme{($sixteen // 0) ? q(terminal) : q(terminal256)}});
     $html = 0;
 }
 
