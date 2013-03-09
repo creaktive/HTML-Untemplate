@@ -20,7 +20,7 @@ for my $script (qw(untemplate xpathify)) {
 
         my $files = $script eq q(untemplate) ? 2 : 1;
 
-        ($ret, $stdout, $stderr) = run_script($script => [qw[baddir/badfile.html] x $files]);
+        ($ret, $stdout, $stderr) = run_script($script => [qw[--color --16] => qw[baddir/badfile.html] x $files]);
         ok($ret == 1, qq($script baddir/badfile.html));
 
         ($ret, $stdout, $stderr) = run_script($script => [qw[t/00-load.t] x $files]);
@@ -50,7 +50,7 @@ run_output_matches(
 );
 
 run_output_matches(
-    xpathify => [qw[--encoding=latin1 --color t/hello.html]],
+    xpathify => [qw[--encoding=latin1 --color --16 t/hello.html]],
     [qq(\\[1m\\[31m\/\\[0m\\[1m\\[94mhtml\\[0m\\[1m\\[31m\/\\[0m\\[1m\\[94mbody\\[0m\\[1m\\[36m\[\\[0m\\[1m\\[92m1\\[0m\\[1m\\[36m\]\\[0m\\[1m\\[31m\/\\[0m\\[1m\\[93mtext\(\)\\[0m\t\\[41m\ \\[0mHello\ World\!)],
     [],
     q(xpathify ANSI colorified output matches),
