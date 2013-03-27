@@ -5,6 +5,7 @@ use utf8;
 use warnings qw(all);
 
 use Digest::SHA;
+use Encode;
 use List::Util qw(sum);
 use Moo;
 use MooX::Types::MooseLike::Base qw(:all);
@@ -100,7 +101,10 @@ sub as_string {
     my ($self) = @_;
     return $self->key if $self->key;
 
-    $self->sha->add($self->content);
+    my $content = $self->content;
+    Encode::_utf8_off($content);
+    $self->sha->add($content);
+
     $self->sha->add($self->index);
     $self->sha->add(join ',', $self->path);
 
